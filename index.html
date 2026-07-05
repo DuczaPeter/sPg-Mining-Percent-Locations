@@ -1,0 +1,1621 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wiki Mining Percent Locations V101</title>
+  <style>
+    :root{--bg:#060a11;--panel:#101827;--panel2:#0b1320;--line:#24364d;--text:#eaf2ff;--muted:#91a6c5;--accent:#00e7ff;--good:#39d98a;--warn:#ffcc66;--bad:#ff6969;--chip:#142238;--shadow:rgba(0,0,0,.28)}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 20% 0%,#122442 0,#070b12 38%,#04070d 100%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.36}
+    header{position:sticky;top:0;z-index:50;background:rgba(7,11,18,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);box-shadow:0 8px 24px var(--shadow)}
+    .top{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap} h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted);margin-top:2px;max-width:1150px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{font-size:12px;border:1px solid #2b405b;background:var(--chip);border-radius:999px;padding:5px 9px;color:#cfe2ff}
+    .progressWrap{padding:0 18px 12px}.progressText{font-size:12px;color:#cfe4ff;display:flex;justify-content:space-between;margin-bottom:5px;gap:10px}.bar{height:10px;background:#07101b;border:1px solid #1f334c;border-radius:99px;overflow:hidden}.fill{height:100%;width:0%;background:linear-gradient(90deg,#0ea5e9,#00e7ff,#39d98a);box-shadow:0 0 18px rgba(0,231,255,.45);transition:width .25s ease}.fill.err{background:linear-gradient(90deg,#ff6969,#ffcc66)}
+    main{display:grid;grid-template-columns:390px 1fr;gap:14px;max-width:1940px;margin:0 auto;padding:14px}@media(max-width:1050px){main{grid-template-columns:1fr}.sticky{position:static!important}}
+    .card{background:linear-gradient(180deg,rgba(16,24,39,.96),rgba(9,15,25,.96));border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px var(--shadow);overflow:hidden}.sticky{position:sticky;top:86px;align-self:start}.card h2{font-size:15px;margin:0;padding:12px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}.body{padding:13px 14px}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}input,select,button{font:inherit}input,select{width:100%;border:1px solid #314762;background:#07101d;color:var(--text);border-radius:10px;padding:9px 10px;outline:none}button{border:1px solid #31577b;background:#13223b;color:#fff;border-radius:10px;padding:9px 10px;cursor:pointer;transition:.12s;white-space:nowrap}button:hover{background:#1a3158}button.primary{border-color:#008ccf;background:#0b4f89}button.primary:hover{background:#0964ad}.buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.status{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#07101d;color:#c8d8ee;font-size:13px}.ok{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}.muted{color:var(--muted)}.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.sep{height:1px;background:var(--line);margin:13px 0}.hint{font-size:12px;color:var(--muted);margin-top:8px}
+    details{border:1px solid var(--line);border-radius:12px;margin:12px 0;background:#0b1422;overflow:hidden}summary{cursor:pointer;padding:11px 12px;font-weight:700;background:rgba(255,255,255,.025)}pre.log{max-height:280px;overflow:auto;white-space:pre-wrap;background:#03070e;border:1px solid #1f3047;border-radius:10px;padding:10px;color:#cbdaf0;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:11px}
+    .materialBox{max-height:590px;overflow:auto;padding-right:3px}.matGroupTitle{margin:12px 0 6px;font-size:12px;color:#9eb4d4;font-weight:850;letter-spacing:.4px;text-transform:uppercase}.matGrid{display:flex;gap:6px;flex-wrap:wrap}.matBtn{font-size:12px;padding:5px 8px;border-radius:7px;background:#071525;color:#cfe5ff;border:1px solid #2d4a6c}.matBtn.active{background:#02313e;border-color:#00e7ff;color:#fff;box-shadow:0 0 0 1px rgba(0,231,255,.35) inset}.count{font-size:10px;color:#8fb0d6;margin-left:4px}.count.miss{color:#ffcc66}
+    .pill{display:inline-flex;align-items:center;gap:5px;border:1px solid #16536b;background:#06202b;color:#00e7ff;border-radius:7px;padding:3px 7px;font-size:11px;font-weight:700}.pill.alt{border-color:#3d4d67;background:#101a2b;color:#d9e7ff}.pill.warn{border-color:#72531a;background:#2a1d05;color:#ffcc66}.pill.bad{border-color:#743a3a;background:#2d1010;color:#ff9d9d}
+    .sysBlock{border:1px solid var(--line);border-radius:13px;margin:12px 0;background:#0b1422;overflow:hidden}.sysDetails{display:block}.sysDetails summary{list-style:none;cursor:pointer}.sysDetails summary::-webkit-details-marker{display:none}.sysHead{padding:12px 13px;background:rgba(255,255,255,.025);font-weight:850;color:#eaf2ff;display:flex;align-items:center;justify-content:space-between;gap:10px}.sysHead .left{display:flex;align-items:center;gap:10px;min-width:0}.sysArrow{display:inline-flex;width:18px;justify-content:center;color:#8fdcff;transition:transform .18s ease}.sysDetails[open] .sysArrow{transform:rotate(90deg)}.sysBody{padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,390px));gap:12px;justify-content:start}.empty{border:1px dashed #35506f;border-radius:13px;padding:18px;text-align:center;color:#a9bdd8;background:#08111d}
+    .locCard{border:1px solid #28415f;background:#09111d;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:250px}.locTop{padding:14px 14px 8px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.locName{font-weight:900;font-size:14px;color:#f3f8ff;letter-spacing:.2px}.locMeta{font-size:11px;color:#9fb5d2;margin-top:8px;line-height:1.45}.badgeLine{display:flex;gap:7px;flex-wrap:wrap;margin-top:0}.locBody{padding:0 14px 14px;display:flex;flex-direction:column;flex:1}.deposit{border-top:1px solid #172941;padding-top:12px;margin-top:12px}.deposit:first-child{border-top:0;padding-top:0;margin-top:0}.depositTitle{font-weight:850;color:#e8f1ff;margin-bottom:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tableWrap{overflow:auto;border:1px solid #172941;border-radius:10px}.matTable{width:100%;border-collapse:collapse;font-size:12px}.matTable th,.matTable td{border-bottom:1px solid #172941;padding:8px 9px;white-space:nowrap}.matTable th{text-align:left;color:#98abc7;background:#0b1626}.matTable tr:last-child td{border-bottom:0}.currentRow{background:#0d1f34}.num{text-align:right;font-variant-numeric:tabular-nums}.received{max-width:360px;white-space:normal;color:#c9d9f2}.qbar{display:inline-block;width:64px;height:6px;background:#07101b;border-radius:6px;vertical-align:middle;margin:0 7px;position:relative;overflow:hidden}.qbar span{display:block;height:100%;background:#36c7ff;border-radius:6px}
+
+    .scoreBox{display:flex;align-items:center;justify-content:center;flex-direction:column;flex:1;padding:18px 8px 10px;margin:2px 0 8px;border-radius:12px;background:linear-gradient(180deg,#08121f,#070d18)}
+    .bigScore{font-size:28px;line-height:1;color:#00e7ff;font-weight:950;letter-spacing:.4px;text-shadow:0 0 14px rgba(0,231,255,.28)}
+    .scoreSub{font-size:11px;color:#b9ccef;margin-top:6px;text-align:center}.scoreSub b{color:#eaf2ff}.heroMat{margin-top:10px;text-align:center;font-size:16px;font-weight:800;letter-spacing:.7px}.heroLine{margin-top:6px;text-align:center;font-size:12px;color:#00d8ff}.heroLine b{color:#dff6ff}.miniInfo{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}.miniTag{font-size:10px;padding:3px 8px;border-radius:999px;background:#0d1a2b;border:1px solid #1c3f59;color:#a8d7ff}.detailToggle{margin-top:auto;border-top:1px solid #183047;padding-top:8px}.detailToggle summary{padding:8px 0;background:transparent;font-size:12px}.detailToggle .body{padding:0 0 6px}.deposit.bestDeposit{border-color:#00e7ff;background:rgba(0,231,255,.035);border-radius:10px;padding:10px;margin-top:10px}.smallNote{font-size:11px;color:#91a6c5;margin-top:4px;text-align:center}
+  
+    .radarMini{margin-top:10px;width:100%;display:flex;flex-direction:column;align-items:center;gap:7px}
+    .radarMiniTop{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;font-size:11px;color:#cfe4ff}
+    .radarSwatch{width:12px;height:12px;border-radius:50%;display:inline-block;box-shadow:0 0 10px currentColor;border:1px solid rgba(255,255,255,.35)}
+    .radarGroup{font-weight:800}
+    .radarSigLine{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;max-width:100%}
+    .sigChip{font-size:10px;line-height:1;border:1px solid currentColor;border-radius:999px;padding:4px 7px;background:rgba(8,17,30,.78);box-shadow:0 0 8px rgba(0,231,255,.08)}
+    .radar-orange{color:#f2a11f}.radar-purple{color:#b357ff}.radar-blue{color:#2388ff}.radar-green{color:#41d6bd}.radar-gray{color:#aeb7c4}.radar-lightblue{color:#64c9ff}.radar-brown{color:#b7824f}
+
+  
+    .diagBox{margin-top:12px;border:1px solid #31506f;background:#06101c;border-radius:12px;overflow:hidden}
+    .diagHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid #203952;background:rgba(255,255,255,.025)}
+    .diagHead b{color:#eaf2ff}.diagActions{display:flex;gap:8px;flex-wrap:wrap}
+    .diagActions button{font-size:12px;padding:6px 9px;border-radius:8px}
+    .diagPre{margin:0;max-height:420px;overflow:auto;white-space:pre-wrap;background:#020712;color:#cfe2ff;padding:12px;font-size:11px;line-height:1.38;border:0}
+
+  
+    .specialLink{color:#00e7ff;text-decoration:none;font-weight:900;border-bottom:1px dotted rgba(0,231,255,.75)}
+    .specialLink:hover{color:#8ff3ff;text-shadow:0 0 10px rgba(0,231,255,.35)}
+
+  
+    .locCard.specialProfile{border-color:#2b6f88;box-shadow:0 0 0 1px rgba(0,231,255,.10),0 12px 30px rgba(0,0,0,.18)}
+    .sourceBadge{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(255,204,102,.45);color:#ffcc66;background:rgba(255,204,102,.08);border-radius:999px;padding:3px 7px;font-size:10px;font-weight:900}
+
+  </style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div><h1>Wiki Mining Percent Locations V101</h1><div class="sub">Star Citizen Wiki API detail → SCMDB-szerű százalékos kártyák. V91 FPS Mining SCMDB special fix. A V84 logika maradt: ship ORES primary deposit, Vehicle Mining biztonságos címkézés, üres vehicle detail retry, Aaron Halo és stabil rendezés.</div></div>
+    <div class="chips"><span class="chip">Adatforrás: Wiki API detail</span><span class="chip">Kategóriák: Ship / ROC / FPS / Plants</span><span class="chip">SCMDB special fix csak kivételként</span></div>
+  </div>
+  <div class="progressWrap"><div class="progressText"><span id="progressLabel">Indításra kész.</span><span id="progressPct">0%</span></div><div class="bar"><div id="progressFill" class="fill"></div></div></div>
+</header>
+<main>
+<section class="card sticky"><h2>Vezérlés</h2><div class="body">
+  <div id="status" class="status">Automatikusan betölti a Wiki API indexeket. A részletes százalékos adat az anyag kiválasztásakor jön.</div>
+  <div class="buttons"><button id="btnLoad" class="primary">Wiki mining automata</button><button id="btnClear">Kijelölés törlése</button></div>
+  <label>Keresés anyagban vagy locationben</label><input id="search" placeholder="pl. aluminium, copper, Hadanite, Golden Medmon, Pyro" />
+  <div class="sep"></div><div class="chips" id="stats"></div>
+  <div class="hint">A képen szereplő teljes anyaglista külön kategóriában látszik. A kis szám a Wiki indexben talált location/rekord jelzés, nem SCMDB HQ score.</div>
+  <div class="sep"></div><div class="materialBox" id="materialBox"></div>
+  <details><summary>Haladó betöltés és log</summary><div class="body">
+    <label>Timeout / próba, mp</label><input id="timeoutSec" type="number" min="5" max="60" value="20" />
+    <label>Kézi commodity detail API URL</label><input id="detailUrl" placeholder="https://api.star-citizen.wiki/api/commodities/uuid-vagy-slug" />
+    <div class="buttons"><button id="btnDetailUrl">Detail URL betöltése</button><button id="btnCopyLog">Log másolása</button></div>
+    <pre id="log" class="log"></pre>
+  </div></details>
+</div></section>
+<section class="card"><h2>Eredmény</h2><div class="body"><div id="headline" class="status">Válassz anyagot bal oldalt.</div><div id="results"></div></div></section>
+</main>
+<script>
+'use strict';
+const APP_VERSION='V101';
+const $ = id => document.getElementById(id);
+const CANON = {
+  ship: ['Agricium','Aluminium','Aslarite','Beryl','Bexalite','Borase','Copper','Corundum','Gold','Hephaestanite','Ice','Iron','Laranite','Lindinium','Ouratite','Quantanium','Quartz','Riccite','Savrilium','Silicon','Stileron','Taranite','Tin','Titanium','Torite','Tungsten'],
+  vehicle: ['Beradom','Carinite','Feynmaline','Glacosite'],
+  fps: ['Aphorite','Carinite','Carinite Pure','Dolivine','Hadanite','Jaclium','Janalite','Sadaryx','Salydium'],
+  plants: ['Amiant Pod','Decari Pod','Degnous Root','Flareweed','Fotia Seedpod','Golden Medmon','Heart of the Woods','Pingala Seeds','Pitanbu','Prota','Revenant Pod','Sunset Berries','Woutan','Comp Board']
+};
+const CATEGORY = [
+  {key:'ship', label:'ORES', icon:'🚀', locationTitle:'Ship mining', groups:['SpaceShip_Mineables','SpaceShip_Mineables_Rare'], endpoints:['https://api.star-citizen.wiki/api/commodities?filter%5Bship%5D=true','https://api.star-citizen.wiki/api/commodities?filter[ship]=true']},
+  {key:'vehicle', label:'VEHICLE MINING', icon:'🚜', locationTitle:'Vehicle / ROC mining', groups:['GroundVehicle_Mineables'], endpoints:['https://api.star-citizen.wiki/api/commodities?filter%5Bground_vehicle%5D=true','https://api.star-citizen.wiki/api/commodities?filter[ground_vehicle]=true','https://api.star-citizen.wiki/api/commodities?filter%5Bvehicle%5D=true','https://api.star-citizen.wiki/api/commodities?filter[vehicle]=true']},
+  {key:'fps', label:'FPS MINING', icon:'⛏', locationTitle:'FPS mining', groups:['FPS_Mineables'], endpoints:['https://api.star-citizen.wiki/api/commodities?filter%5Bfps%5D=true','https://api.star-citizen.wiki/api/commodities?filter[fps]=true']},
+  {key:'plants', label:'PLANTS', icon:'🌿', locationTitle:'Harvestables / plants', groups:['Harvestables'], endpoints:['https://api.star-citizen.wiki/api/commodities?filter%5Bharvestable%5D=true','https://api.star-citizen.wiki/api/commodities?filter[harvestable]=true','https://api.star-citizen.wiki/api/commodities?filter%5Bharvestables%5D=true','https://api.star-citizen.wiki/api/commodities?filter[harvestables]=true']}
+];
+
+const RADAR_SIGNATURES = {
+  quantanium: {group:'Narancs / arany', cls:'radar-orange', values:['3,170','6,340'], desc:'nagyon ritka / kiemelt értékű'},
+  stileron: {group:'Narancs / arany', cls:'radar-orange', values:['3,185','6,370'], desc:'nagyon ritka / kiemelt értékű'},
+  savrilium: {group:'Narancs / arany', cls:'radar-orange', values:['3,200','6,400'], desc:'nagyon ritka / kiemelt értékű'},
+
+  ouratite: {group:'Lila', cls:'radar-purple', values:['3,370','6,740','10,110'], desc:'nagyon magas értékű'},
+  riccite: {group:'Lila', cls:'radar-purple', values:['3,385','6,770','10,155'], desc:'nagyon magas értékű'},
+  lindinium: {group:'Lila', cls:'radar-purple', values:['3,400','6,800','10,200'], desc:'nagyon magas értékű'},
+
+  beryl: {group:'Kék', cls:'radar-blue', values:['3,540','7,080','10,620','14,160'], desc:'magas értékű'},
+  taranite: {group:'Kék', cls:'radar-blue', values:['3,555','7,110','10,665','14,220'], desc:'magas értékű'},
+  borase: {group:'Kék', cls:'radar-blue', values:['3,570','7,140','10,710','14,280'], desc:'magas értékű'},
+  gold: {group:'Kék', cls:'radar-blue', values:['3,585','7,170','10,755','14,340'], desc:'magas értékű'},
+  bexalite: {group:'Kék', cls:'radar-blue', values:['3,600','7,200','10,800','14,400'], desc:'magas értékű'},
+
+  laranite: {group:'Zöld / türkiz', cls:'radar-green', values:['3,825','7,650','11,475','15,300','19,125'], desc:'közép-magas értékű'},
+  aslarite: {group:'Zöld / türkiz', cls:'radar-green', values:['3,840','7,680','11,520','15,360','19,200'], desc:'közép-magas értékű'},
+  titanium: {group:'Zöld / türkiz', cls:'radar-green', values:['3,855','7,710','11,565','15,420','19,275'], desc:'közép-magas értékű'},
+  tungsten: {group:'Zöld / türkiz', cls:'radar-green', values:['3,870','7,740','11,610','15,480','19,350'], desc:'közép-magas értékű'},
+  agricium: {group:'Zöld / türkiz', cls:'radar-green', values:['3,885','7,770','11,655','15,540','19,425'], desc:'közép-magas értékű'},
+  torite: {group:'Zöld / türkiz', cls:'radar-green', values:['3,900','7,800','11,700','15,600','19,500'], desc:'közép-magas értékű'},
+
+  hephaestanite: {group:'Szürke', cls:'radar-gray', values:['4,180','8,360','12,540','16,720','20,900','25,080'], desc:'alap / tömegesebb'},
+  tin: {group:'Szürke', cls:'radar-gray', values:['4,195','8,390','12,585','16,780','20,975','25,170'], desc:'alap / tömegesebb'},
+  quartz: {group:'Szürke', cls:'radar-gray', values:['4,210','8,420','12,630','16,840','21,050','25,260'], desc:'alap / tömegesebb'},
+  corundum: {group:'Szürke', cls:'radar-gray', values:['4,225','8,450','12,675','16,900','21,125','25,350'], desc:'alap / tömegesebb'},
+  copper: {group:'Szürke', cls:'radar-gray', values:['4,240','8,480','12,720','16,960','21,200','25,440'], desc:'alap / tömegesebb'},
+  silicon: {group:'Szürke', cls:'radar-gray', values:['4,255','8,510','12,765','17,020','21,275','25,530'], desc:'alap / tömegesebb'},
+  iron: {group:'Szürke', cls:'radar-gray', values:['4,270','8,540','12,810','17,080','21,350','25,620'], desc:'alap / tömegesebb'},
+  aluminium: {group:'Szürke', cls:'radar-gray', values:['4,285','8,570','12,855','17,140','21,425','25,710'], desc:'alap / tömegesebb'},
+  ice: {group:'Szürke', cls:'radar-gray', values:['4,300','8,600','12,900','17,200','21,500','25,800'], desc:'alap / tömegesebb'},
+
+  roc_mineables: {group:'Zöld / türkiz', cls:'radar-green', values:['4,000','8,000','12,000','16,000','20,000','24,000','28,000'], desc:'ROC mineable kategória'},
+  fps_mineables: {group:'Világoskék', cls:'radar-lightblue', values:['3,000','6,000','9,000','12,000','15,000','18,000','21,000','24,000','27,000','30,000'], desc:'FPS mineable kategória'},
+  salvage: {group:'Barna / bronz', cls:'radar-brown', values:['2,000','4,000','6,000','8,000','10,000','12,000','14,000','16,000','18,000','20,000','22,000','24,000','26,000','28,000','30,000'], desc:'Salvage kategória'}
+};
+function radarSignatureForMaterial(m){
+  if(!m) return null;
+  if(m.catKey==='vehicle') return RADAR_SIGNATURES.roc_mineables;
+  if(m.catKey==='fps') return RADAR_SIGNATURES.fps_mineables;
+  const key=materialKey(m.name||'');
+  return RADAR_SIGNATURES[key] || null;
+}
+function renderRadarMini(m){
+  const sig=radarSignatureForMaterial(m);
+  if(!sig) return '';
+  const chips=sig.values.map(v=>`<span class="sigChip ${sig.cls}">${esc(v)}</span>`).join('');
+  return `<div class="radarMini"><div class="radarMiniTop"><span class="radarSwatch ${sig.cls}"></span><span class="radarGroup ${sig.cls}">${esc(sig.group)}</span><span class="muted">Radar signature</span></div><div class="radarSigLine">${chips}</div></div>`;
+}
+
+const state = { records:[], materials:[], selectedId:'', selectedDetail:null, detailCache:new Map(), selectToken:0 };
+function now(){return new Date().toISOString()}
+function log(type,msg,obj){const text=`[${now()}] ${type}: ${msg}`+(obj!==undefined?'\n'+safe(obj)+'\n':'\n'); $('log').textContent += text+'\n'; $('log').scrollTop=$('log').scrollHeight; console.log(type,msg,obj||'');}
+function safe(o){try{return JSON.stringify(o,(k,v)=>typeof v==='string'&&v.length>900?v.slice(0,900)+'...':v,2)}catch(e){return String(o)}}
+function setProgress(p,label,err=false){$('progressFill').style.width=Math.max(0,Math.min(100,p))+'%'; $('progressFill').classList.toggle('err',!!err); $('progressLabel').textContent=label; $('progressPct').textContent=Math.round(p)+'%';}
+function setStatus(html){$('status').innerHTML=html;}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function stripMiningDecorators(s){
+  // Wiki API névalakok példák:
+  //   Hephaestanite (R) (Raw_Minerals)
+  //   Raw Hephaestanite
+  //   Hephaestanite (Raw)
+  //   Copper (Ore)
+  // Ezeket ugyanarra a kanonikus anyagra kell vinni, de a location/százalék logikát nem piszkáljuk.
+  return String(s??'')
+    .replace(/^Raw\s+/i,'')
+    .replace(/\s*\((R|Raw|Ore|Commodity|Mineral|Raw_Minerals|Raw Minerals|Refined|Refined_Minerals)\)\s*/gi,' ')
+    .replace(/[_-]?Raw[_-]?Minerals/gi,' ')
+    .replace(/[_-]?Refined[_-]?Minerals/gi,' ')
+    .replace(/\bRaw\b$/i,'')
+    .replace(/\bOre\b$/i,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function norm(s){return stripMiningDecorators(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/aluminum/g,'aluminium').replace(/quantainium/g,'quantanium').replace(/saldynium/g,'salydium').replace(/sadarxy/g,'sadaryx').replace(/beardon/g,'beradom').replace(/beradon/g,'beradom').replace(/pitambu/g,'pitanbu').replace(/jacl[iy]um/g,'jaclium').replace(/[^a-z0-9]+/g,'').trim()}
+function materialKey(s){return norm(s)}
+const CANON_LOOKUP = (()=>{const m=new Map(); for(const [cat,list] of Object.entries(CANON)){for(const n of list){m.set(cat+'|'+materialKey(n),n)}} return m;})();
+
+const PLANT_ALIAS_TO_KEY = {
+  aniat:'amiantpod',
+  amiant:'amiantpod',
+  amiantpod:'amiantpod',
+  decari:'decaripod',
+  decaripod:'decaripod',
+  degnous:'degnousroot',
+  degnousroot:'degnousroot',
+  fotia:'fotiaseedpod',
+  fotiaseedpod:'fotiaseedpod',
+  pingala:'pingalaseeds',
+  pingalaseed:'pingalaseeds',
+  pingalaseeds:'pingalaseeds',
+  revenant:'revenantpod',
+  revenantpod:'revenantpod',
+  sunsetberry:'sunsetberries',
+  sunsetberries:'sunsetberries'
+};
+function plantAliasKeyFromText(raw){
+  const k=norm(raw||'');
+  if(!k) return '';
+  if(PLANT_ALIAS_TO_KEY[k]) return PLANT_ALIAS_TO_KEY[k];
+
+  // Hosszabb szövegekhez, például "Golden Medmon harvestable_base_GoldenMedmon Harvestables".
+  const keys=Object.keys(PLANT_ALIAS_TO_KEY).sort((a,b)=>b.length-a.length);
+  for(const alias of keys){
+    if(k.includes(alias)) return PLANT_ALIAS_TO_KEY[alias];
+  }
+  return '';
+}
+const SPECIAL_DETAIL_SLUGS = {
+  ship: {
+    hephaestanite: ['hephaestanite-r','hephaestanite-raw','hephaestanite-ore','hephaestanite'],
+    aluminium: ['aluminum-r','aluminium-r','aluminum-ore','aluminium-ore','aluminum-raw','aluminium-raw'],
+    quantanium: ['quantanium-r','quantainium-r','quantanium-ore','quantainium-ore','quantanium-raw','quantainium-raw']
+  },
+  vehicle: { beradom: ['beradom','beardon','beradon'], carinite: ['carinite-raw','carinite-r','carinite'] }, fps: {}, plants: {
+    amiantpod: ['amiant-pod','amiant','aniat','aniat-pod'],
+    decaripod: ['decari-pod','decari','decari-pods'],
+    degnousroot: ['degnous-root','degnous'],
+    fotiaseedpod: ['fotia-seedpod','fotia-seed-pod','fotia'],
+    pingalaseeds: ['pingala-seeds','pingala-seed','pingala'],
+    revenantpod: ['revenant-pod','revenant'],
+    sunsetberries: ['sunset-berries','sunset-berry'],
+    flareweed: ['flareweed'],
+    woutan: ['woutan']
+  }
+};
+function firstText(obj, keys){for(const k of keys){const v=obj&&obj[k]; if(typeof v==='string'&&v.trim()) return v.trim(); if(v&&typeof v==='object'&&typeof v.name==='string') return v.name.trim();} return '';}
+function cleanName(name, cat){let k=materialKey(name); if(cat==='plants'){const ak=plantAliasKeyFromText(name); if(ak) k=ak;} return CANON_LOOKUP.get(cat+'|'+k) || stripMiningDecorators(name);}
+function isInternalName(n){return /^RMB[-_]/i.test(String(n||'')) || /ResourceMineable/i.test(String(n||''));}
+function objValuesText(obj, maxDepth=2){const out=[]; const seen=new Set(); function walk(v,d){if(v==null||seen.has(v)||d>maxDepth)return; if(typeof v==='string'||typeof v==='number'||typeof v==='boolean'){out.push(String(v));return;} if(typeof v==='object'){seen.add(v); if(Array.isArray(v))v.slice(0,50).forEach(x=>walk(x,d+1)); else Object.values(v).slice(0,90).forEach(x=>walk(x,d+1));}} walk(obj,0); return out.join(' ');}
+function getArrayPayload(json){if(Array.isArray(json))return json; if(json&&Array.isArray(json.data))return json.data; if(json&&json.data&&Array.isArray(json.data.data))return json.data.data; if(json&&Array.isArray(json.items))return json.items; if(json&&Array.isArray(json.results))return json.results; return [];}
+function nextUrlFromJson(json){if(!json||typeof json!=='object')return ''; const n=json.next||json.next_page_url||(json.links&&(json.links.next||json.links.next_url)); return typeof n==='string'?n:'';}
+function buildAttempts(rawUrl){const enc=encodeURIComponent(rawUrl); return [{label:'Direkt Wiki API',url:rawUrl,kind:'plain'},{label:'AllOrigins raw',url:'https://api.allorigins.win/raw?url='+enc,kind:'plain'},{label:'AllOrigins get',url:'https://api.allorigins.win/get?url='+enc,kind:'alloriginsget'},{label:'CodeTabs',url:'https://api.codetabs.com/v1/proxy/?quest='+enc,kind:'plain'},{label:'isomorphic-git CORS',url:'https://cors.isomorphic-git.org/'+rawUrl,kind:'plain'}];}
+async function fetchText(url, ms){const c=new AbortController(); const t=setTimeout(()=>c.abort(),ms); try{const r=await fetch(url,{signal:c.signal,cache:'no-store'}); const text=await r.text(); return {r,text};} finally{clearTimeout(t);}}
+async function fetchJsonUrl(rawUrl){const ms=Math.max(5,Number($('timeoutSec').value)||20)*1000; let last=[]; log('FETCH_START','Wiki API lekérés',{rawUrl,timeoutMs:ms}); for(const a of buildAttempts(rawUrl)){const t0=performance.now(); try{log('TRY',a.label,{url:a.url}); const {r,text}=await fetchText(a.url,ms); if(!r.ok)throw new Error('HTTP '+r.status+' '+text.slice(0,220)); let json; if(a.kind==='alloriginsget'){const outer=JSON.parse(text); json=typeof outer.contents==='string'?JSON.parse(outer.contents):outer.contents;} else json=JSON.parse(text); log('FETCH_OK',a.label,{ms:Math.round(performance.now()-t0),summary:summarize(json)}); return json;}catch(e){const msg=e.name==='AbortError'?'Timeout '+ms+'ms':(e.message||String(e)); last.push(a.label+'='+msg); log('FETCH_ERR',a.label,{ms:Math.round(performance.now()-t0),error:msg});}} throw new Error('Wiki API minden lekérés elhasalt: '+last.join(' | '));}
+function summarize(json){if(Array.isArray(json))return{type:'array',length:json.length,first:json[0]?Object.keys(json[0]).slice(0,20):[]}; if(json&&typeof json==='object')return{type:'object',keys:Object.keys(json).slice(0,30),data:Array.isArray(json.data)?json.data.length:undefined}; return{type:typeof json};}
+async function fetchPaged(url){let all=[], pages=0, next=url; while(next&&pages<12){pages++; const json=await fetchJsonUrl(next); const arr=getArrayPayload(json); all.push(...arr); let n=nextUrlFromJson(json); if(n&&n.startsWith('/')) n=new URL(n,'https://api.star-citizen.wiki').href; next=n&&n!==next?n:'';} return all;}
+async function fetchFirstEndpoint(cat){let last=null; for(const url of cat.endpoints){try{const arr=await fetchPaged(url); if(arr.length){log('ENDPOINT_OK',cat.label,{url,count:arr.length}); return {url,arr};} last=new Error('Üres endpoint '+url); log('ENDPOINT_EMPTY',cat.label,{url});}catch(e){last=e; log('ENDPOINT_ERR',cat.label,{url,error:e.message||String(e)});}} throw last||new Error('Nincs működő endpoint: '+cat.label);}
+function commodityMatchesCat(c, cat){const name=firstText(c,['name','displayName','display_name','title','label']); if(!name||isInternalName(name)) return false; const key=materialKey(name); const canonical = new Set(CANON[cat.key].map(materialKey)); if(!canonical.has(key)) return false; const text=objValuesText(c,2).toLowerCase(); if(cat.key==='ship') return c.has_ship_mineables===true || /ship[_\s-]*mine|space\s*ship|ore|raw/.test(text);
+  if(cat.key==='vehicle') return c.has_ground_vehicle_mineables===true || /ground[_\s-]*vehicle|vehicle|roc/.test(text);
+  if(cat.key==='fps') return c.has_fps_mineables===true || /fps|hand|mining|gem/.test(text);
+  if(cat.key==='plants') return c.has_harvestables===true || c.kind==='harvestable' || /harvest|plant|flora/.test(text);
+  return true;}
+function buildMaterials(){const map=new Map(); for(const cat of CATEGORY){for(const n of CANON[cat.key]){const key=cat.key+'|'+materialKey(n); map.set(key,{id:key,catKey:cat.key,catLabel:cat.label,cat,matKey:materialKey(n),name:n,records:[],detailLink:'',locationsCount:0,found:false});}}
+  for(const rec of state.records){const cat=CATEGORY.find(c=>c.key===rec.__catKey); if(!cat) continue; const raw=firstText(rec,['name','displayName','display_name','title','label']); const mat=cleanName(raw,cat.key); const key=cat.key+'|'+materialKey(mat); if(!map.has(key)) continue; const m=map.get(key); m.records.push(rec); m.found=true; m.detailLink=rec.link||rec.url||m.detailLink; m.locationsCount=Math.max(m.locationsCount,Array.isArray(rec.locations)?rec.locations.length:0);}
+  state.materials=[...map.values()]; log('MATERIALS_OK','Teljes anyagindex kész',{materials:state.materials.length,found:state.materials.filter(m=>m.found).length,missing:state.materials.filter(m=>!m.found).map(m=>m.catLabel+'/'+m.name)});}
+async function loadAll(){try{setProgress(4,'Wiki mining indexek betöltése...'); setStatus('<span class="muted">Wiki API indexek betöltése folyamatban.</span>'); state.records=[]; state.selectedDetail=null; state.detailCache.clear(); let done=0; for(const cat of CATEGORY){setProgress(8+done*15,cat.label+' lekérése...'); try{const got=await fetchFirstEndpoint(cat); for(const r of got.arr){if(commodityMatchesCat(r,cat)){r.__catKey=cat.key; state.records.push(r);}}}catch(e){log('CATEGORY_FAIL',cat.label,{error:e.message||String(e)});} done++;}
+  buildMaterials(); renderMaterials(); setProgress(82,'Index kész. Első elérhető anyag részletes adata...'); if(!state.selectedId){const first=state.materials.find(m=>m.found)||state.materials[0]; if(first) state.selectedId=first.id;} renderMaterials(); if(state.selectedId) await selectMaterial(state.selectedId,false); setProgress(100,'Kész, választhatsz anyagot.'); setStatus('<span class="ok">Wiki mining indexek betöltve.</span> Anyagok: '+state.materials.length+'. Talált API rekord: '+state.materials.filter(m=>m.found).length+'.');}
+ catch(e){setProgress(100,'Wiki API betöltés hiba.',true); setStatus('<span class="bad">Wiki API hiba:</span> '+esc(e.message||String(e))); log('LOAD_FAIL','Wiki loader hiba',{error:e.message||String(e)});}}
+function materialButtonCountHtml(m){
+  if(!m) return '';
+  if(m.found) return `<span class="count">${esc(String(m.locationsCount||m.records.length))}</span>`;
+  const fixes=manualFixedForMaterial(m);
+  if(fixes.length) return `<span class="count">${esc(String(fixes.length))}</span>`;
+  return '';
+}
+function renderMaterials(){const box=$('materialBox'); const q=$('search').value.trim().toLowerCase(); let html=''; for(const cat of CATEGORY){const list=state.materials.filter(m=>m.catKey===cat.key && (!q||m.name.toLowerCase().includes(q))); html+='<div class="matGroupTitle">'+esc(cat.label)+'</div><div class="matGrid">'+list.map(m=>`<button class="matBtn ${m.id===state.selectedId?'active':''}" data-id="${esc(m.id)}">${esc(m.name)}${materialButtonCountHtml(m)}</button>`).join('')+'</div>'; } box.innerHTML=html; box.querySelectorAll('.matBtn').forEach(btn=>btn.addEventListener('click',()=>selectMaterial(btn.dataset.id,true))); renderStats();}
+async function selectMaterial(id, update=true){
+  const token=++state.selectToken;
+  state.selectedId=id;
+  state.selectedDetail=null;
+  renderMaterials();
+
+  const m=state.materials.find(x=>x.id===id);
+  const res=$('results');
+  if(res) res.innerHTML='<div class="empty">Betöltés folyamatban. Régi találatok törölve, hogy ne keveredjenek az új anyaggal.</div>';
+
+  if(!m){renderResults(); return;}
+
+  // V89:
+  // A Hathor Caves javított anyagait nem váratjuk a Wiki detail API-ra.
+  // A Wiki indexben ezek gyakran "nincs" státuszban vannak, vagy rossz / üres detailt adnak.
+  // Itt a kézzel megadott, ellenőrzött fix adatból azonnal renderelünk.
+  const manualFixes=manualFixedForMaterial(m);
+  if(!m.found && manualFixes.length){
+    state.selectedDetail={locations:[]};
+    $('headline').innerHTML='<b>'+esc(m.name)+'</b> SCMDB special fix adatból betöltve.';
+    renderResults();
+    if(update) setProgress(100,'SCMDB special fix betöltve: '+m.name);
+    log('DETAIL_FIXED_IMMEDIATE','SCMDB special fix azonnal renderelve API várakozás nélkül',{material:m.name, category:m.catLabel, fixes:manualFixes});
+    return;
+  }
+
+  $('headline').innerHTML='<b>'+esc(m.name)+'</b> részletes százalékos adat betöltése...';
+  if(!m.found){
+    $('headline').innerHTML='<b>'+esc(m.name)+'</b> nincs az indexben, slug alapján próbálom a detail API-t...';
+    log('DETAIL_FALLBACK','Az anyag nem volt az indexben, de detail slug próbák indulnak.',{material:m.name, category:m.catLabel});
+  }
+
+  try{
+    const detail=await loadCommodityDetail(m);
+
+    // V88:
+    // Ha közben a felhasználó másik anyagra kattintott, a régi API válasz nem írhatja felül az új állapotot.
+    if(token!==state.selectToken || state.selectedId!==id){
+      log('DETAIL_STALE_IGNORED','Késve beérkező régi detail válasz eldobva',{material:m.name, id});
+      return;
+    }
+
+    state.selectedDetail=detail;
+    renderResults();
+    if(update) setProgress(100,'Részletes adat betöltve: '+m.name);
+  }catch(e){
+    if(token!==state.selectToken || state.selectedId!==id){
+      log('DETAIL_STALE_ERROR_IGNORED','Késve beérkező régi detail hiba eldobva',{material:m.name, id, error:e.message||String(e)});
+      return;
+    }
+
+    // Hathor Caves fixhez nem szabad teljesen elhasalni, ha a Wiki detail nem található.
+    // Ilyenkor üres detailből is tudunk fix kártyát építeni.
+    if(manualFixedForMaterial(m).length){
+      state.selectedDetail={locations:[]};
+      renderResults();
+      if(update) setProgress(100,'SCMDB special fix betöltve: '+m.name);
+      log('DETAIL_FIXED_FALLBACK','Wiki detail hiba után SCMDB special fixből renderelve',{material:m.name, category:m.catLabel, fixes:manualFixedForMaterial(m), error:e.message||String(e)});
+      return;
+    }
+
+    $('headline').innerHTML='<span class="bad">Detail betöltési hiba:</span> '+esc(e.message||String(e));
+    $('results').innerHTML='<div class="empty">Nem sikerült részletes százalékos adatot találni ehhez az anyaghoz. Nézd meg a logban, melyik detail URL-eket próbálta.</div>';
+    log('DETAIL_FAIL','Commodity detail hiba',{material:m.name,error:e.message||String(e)});
+  }
+}
+async function loadCommodityDetail(m){
+  if(state.detailCache.has(m.id)) return state.detailCache.get(m.id);
+  const urls=[];
+  const rec=m.records[0]||{};
+  for(const u of [m.detailLink, rec.link, rec.url]) if(u && !urls.includes(u)) urls.push(u);
+  const slugCandidates=[];
+  const addSlug = s => { if(s && !slugCandidates.includes(s)) slugCandidates.push(s); };
+  if(rec.slug) addSlug(rec.slug);
+  const rawNames=[m.name, firstText(rec,['name','displayName','display_name','title','label'])].filter(Boolean);
+  for(const rawName of rawNames){
+    const cleaned=stripMiningDecorators(rawName);
+    const baseSlug=cleaned.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const mk=materialKey(cleaned);
+    const special=((SPECIAL_DETAIL_SLUGS[m.catKey]||{})[mk]||[]);
+    special.forEach(addSlug);
+    if(baseSlug){
+      if(m.catKey==='ship') [baseSlug+'-r', baseSlug+'-ore', baseSlug+'-raw', baseSlug].forEach(addSlug);
+      else [baseSlug, baseSlug+'-raw', baseSlug+'-r'].forEach(addSlug);
+    }
+  }
+  for(const s of slugCandidates){
+    const u='https://api.star-citizen.wiki/api/commodities/'+encodeURIComponent(s);
+    if(!urls.includes(u)) urls.push(u);
+  }
+  if(!urls.length) throw new Error('Nincs commodity detail link vagy slug ehhez: '+m.name);
+  setProgress(86,'Commodity detail lekérése: '+m.name);
+  let lastErr=null;
+  let emptyDetailFallback=null;
+  for(const url of urls){
+    try{
+      const json=await fetchJsonUrl(url);
+      const data=json&&json.data?json.data:json;
+      if(!data || typeof data!=='object') throw new Error('Üres detail válasz');
+      if(!Array.isArray(data.locations)) throw new Error('Detail válaszban nincs locations tömb');
+
+      // V84:
+      // A Wiki API néha létező, de üres detail rekordot ad vissza.
+      // Carinite vehicle példán ez azt okozta, hogy a program megállt egy 0 locations válasznál,
+      // és nem próbálta tovább a raw / alternatív slugokat.
+      // Most az üres detailt csak tartaléknak mentjük, és továbbpróbáljuk a következő URL-t.
+      if(data.locations.length===0){
+        if(!emptyDetailFallback) emptyDetailFallback={data,url};
+        log('DETAIL_EMPTY','Detail válasz üres locations tömbbel, következő URL próbálása',{material:m.name,category:m.catLabel,url,summary:summarize(data)});
+        continue;
+      }
+
+      state.detailCache.set(m.id,data);
+      log('DETAIL_OK','Commodity detail feldolgozva',{material:m.name,category:m.catLabel,url,summary:summarize(data),locations:data.locations.length,sampleLocation:data.locations[0]});
+      return data;
+    }catch(e){ lastErr=e; log('DETAIL_URL_ERR','Detail URL próba hiba',{material:m.name,url,error:e.message||String(e)}); }
+  }
+  if(emptyDetailFallback){
+    state.detailCache.set(m.id,emptyDetailFallback.data);
+    log('DETAIL_EMPTY_FALLBACK','Csak üres detail válasz volt elérhető, ezt használom diagnosztikára',{material:m.name,category:m.catLabel,url:emptyDetailFallback.url,summary:summarize(emptyDetailFallback.data)});
+    return emptyDetailFallback.data;
+  }
+  throw lastErr || new Error('Minden detail URL elhasalt: '+m.name);
+}
+function chosenQualityRange(best,loc){
+  const s=best&&best.slice;
+  if(s && Number.isFinite(Number(s.qMin)) && Number.isFinite(Number(s.qMax))) return qRange(s.qMin,s.qMax);
+  const row=s&&s.row;
+  if(row && (row.quality_min!=null || row.quality_max!=null)) return qRange(row.quality_min,row.quality_max);
+  return qRange(loc.quality_min,loc.quality_max);
+}
+function pct(v,d=1){const n=Number(v); return Number.isFinite(n)?n.toFixed(d)+'%':'—';}
+function num(v,d=1){const n=Number(v); return Number.isFinite(n)?n.toFixed(d):'—';}
+function qRange(a,b){if(a==null&&b==null)return '—'; return `${a??'—'}–${b??'—'}`;}
+function rangePct(a,b){const x=Number(a),y=Number(b); if(!Number.isFinite(x)&&!Number.isFinite(y))return '—'; return `${Number.isFinite(x)?x.toFixed(1):'—'}–${Number.isFinite(y)?y.toFixed(1):'—'}%`;}
+function groupMatchName(name, cat){const s=String(name||''); return cat.groups.some(g=>s===g || s.includes(g) || (g==='SpaceShip_Mineables'&&/SpaceShip/i.test(s)) || (g==='GroundVehicle_Mineables'&&/GroundVehicle|Vehicle|ROC/i.test(s)) || (g==='FPS_Mineables'&&/FPS/i.test(s)) || (g==='Harvestables'&&/Harvest/i.test(s)));}
+function materialRowText(row){
+  return [row&&row.name,row&&row.key,row&&row.display_name,row&&row.label].filter(Boolean).join(' ');
+}
+function isExplicitRawMaterialRow(row){
+  const t=materialRowText(row);
+  return /\(\s*(R|Raw|Raw_Minerals|Raw Minerals)\s*\)|\bRaw\b|Raw_Minerals/i.test(t);
+}
+function isShipOreMaterialRow(row){
+  const t=materialRowText(row);
+  if(isExplicitRawMaterialRow(row)) return false;
+  if(/\(\s*Ore\s*\)|\bOre\b/i.test(t)) return true;
+  // Fallback: ha nincs explicit Raw/Ore jelölés, nem dobjuk ki,
+  // mert néhány API mező plain anyagnévként jöhet.
+  return !/\(\s*(Refined|Refined_Minerals|Commodity)\s*\)|Refined_Minerals/i.test(t);
+}
+function selectedMaterialRows(dep,m){
+  const mats=Array.isArray(dep.materials)?dep.materials:[];
+  if(m.catKey==='ship'){
+    // FONTOS JAVÍTÁS:
+    // A Wiki API sok valódi ship primary deposit sort "Raw X" néven ad vissza.
+    // Ez nem kidobandó, ha maga a deposit neve szerint X a főanyag.
+    // Másodlagos anyag viszont továbbra sem találat, mert ott a primaryKey nem egyezik.
+    if(shipPrimaryMaterialKey(dep)!==m.matKey) return [];
+  }
+  if(m.catKey==='plants'){
+    if(!harvestDepMatchesMaterial(dep,m)) return [];
+    const rows=mats.filter(x=>materialKey(x.name||x.key||'')===m.matKey && Number(x.max_percentage)>0);
+    if(rows.length) return rows;
+
+    // V94:
+    // Harvestables esetén a Wiki API több plantnél üres material sort ad:
+    // name üres, percentage 0, de maga a deposit neve jó.
+    // Ilyenkor a deposit/location occurrence a használható százalék.
+    return [{
+      name:m.name,
+      key:m.matKey,
+      min_percentage:100,
+      max_percentage:100,
+      quality_min:null,
+      quality_max:null,
+      quality_mean:null,
+      __syntheticHarvest:true
+    }];
+  }
+  return mats.filter(x=>materialKey(x.name||x.key||'')===m.matKey);
+}
+function depPrimaryText(dep){return [dep.label,dep.key,dep.name,dep.group_name,dep.display_name,dep.type].filter(Boolean).join(' ');}
+function rowNumbers(row){return {min:Number(row.min_percentage),max:Number(row.max_percentage),qMin:Number(row.quality_min),qMax:Number(row.quality_max)};}
+function isShipGood501Row(x){
+  // A ship mining jó minőségű sávja: 501–1000.
+  // Nem elég, hogy „magasabb”, ténylegesen ezt a quality tartományt keressük.
+  return Number.isFinite(x.qMin) && Number.isFinite(x.qMax) && x.qMin >= 501 && x.qMax <= 1000 && x.qMax >= 501;
+}
+function isShipBadPrimaryRow(x, good){
+  if(!Number.isFinite(x.max) || !Number.isFinite(x.qMax)) return false;
+  // A rosszabb elsődleges sáv általában nagyobb anyagarányú és alacsonyabb quality.
+  return x.max > good.max && x.qMax < good.qMax;
+}
+function materialRowsByKey(dep){
+  const map=new Map();
+  const mats=Array.isArray(dep.materials)?dep.materials:[];
+  mats.forEach((row,idx)=>{
+    const key=materialKey(row.name||row.key||'');
+    if(!key) return;
+    if(!map.has(key)) map.set(key,[]);
+    map.get(key).push({row,idx,...rowNumbers(row)});
+  });
+  return map;
+}
+function hasPrimaryDualBandRows(rows){
+  const nums=(rows||[]).filter(x=>Number.isFinite(x.max));
+  if(!nums.length) return false;
+
+  // V72:
+  // A Wiki API néhány primary depositot nem úgy ad vissza, hogy
+  // "rossz primary sáv + jó primary sáv", hanem két 501–1000 primary sávként.
+  // Példa a logból: Corundum Deposit:
+  //   Corundum (Raw) 28.3–78.3%, Q 501–1000
+  //   Corundum (Raw) 5.7–11.7%, Q 501–1000
+  // Ez SCMDB szerint még primary találat, ezért nem követeljük meg a rosszabb primary sávot.
+  return nums.some(isShipGood501Row);
+}
+function shipMaterialKeyFromDepositName(dep){
+  // A Wiki detailben a valódi elsődleges anyag a deposit nevéből jön:
+  // például "Taranite Deposit", "Stileron Deposit", "Laranite Deposit".
+  // Ez erősebb, mint az, hogy a material táblában milyen másodlagos sorok vannak.
+  const rawText=[dep.label,dep.name,dep.display_name,dep.key].filter(Boolean).join(' | ');
+  const lowerRaw=rawText.toLowerCase();
+  const shipKeys=CANON.ship.map(n=>({name:n,key:materialKey(n)}));
+
+  // 1) Szigorú forma: "<anyag> Deposit".
+  for(const x of shipKeys.slice().sort((a,b)=>b.name.length-a.name.length)){
+    const escaped=x.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+');
+    const re=new RegExp('\\b'+escaped+'(?:\\s*\\((?:R|Raw|Ore|Raw_Minerals)\\))?\\s+Deposit\\b','i');
+    if(re.test(rawText)) return x.key;
+  }
+
+  // 2) Wiki belső kulcs forma: pl. SpaceShip_Mineables_Taranite.
+  const labelKey=materialKey(rawText);
+  if(!labelKey) return '';
+  const matches=shipKeys.filter(x=>labelKey.includes(x.key));
+  if(!matches.length) return '';
+  matches.sort((a,b)=>b.key.length-a.key.length);
+  return matches[0].key;
+}
+function shipPrimaryMaterialKey(dep){
+  const groups=materialRowsByKey(dep);
+
+  // 1) Ha a deposit neve megmondja az elsődleges anyagot, az az igazság.
+  // Ez zárja ki a Taranite-as Pyro találatokat, ha azok valójában Laranite depositok.
+  const namedPrimary=shipMaterialKeyFromDepositName(dep);
+  if(namedPrimary) return namedPrimary;
+
+  // 2) Csak végső fallback: ha a deposit nevéből nem derül ki semmi,
+  // akkor az első olyan anyagot vesszük, amelynek megvan a primary két sávos mintája.
+  const candidates=[];
+  for(const [key,rows] of groups.entries()){
+    if(!hasPrimaryDualBandRows(rows)) continue;
+    const goodMax=Math.max(...rows.filter(isShipGood501Row).map(x=>x.max).filter(Number.isFinite));
+    const firstIndex=Math.min(...rows.map(x=>x.idx));
+    candidates.push({key,goodMax,firstIndex});
+  }
+  if(!candidates.length) return '';
+  candidates.sort((a,b)=>a.firstIndex-b.firstIndex || b.goodMax-a.goodMax);
+  return candidates[0].key;
+}
+function hasShipPrimaryDualBand(dep,m){
+  if(shipPrimaryMaterialKey(dep)!==m.matKey) return false;
+  const rows=materialRowsByKey(dep).get(m.matKey)||[];
+  return hasPrimaryDualBandRows(rows);
+}
+
+function harvestDepositMaterialKey(dep){
+  const rawText=[
+    dep && dep.label,
+    dep && dep.name,
+    dep && dep.display_name,
+    dep && dep.key
+  ].filter(Boolean).join(' | ');
+
+  if(!rawText) return '';
+
+  // V95:
+  // Több harvestable Wiki/SCMDB név rövid néven vagy item-néven fut.
+  // Példák:
+  // Decari -> Decari Pod
+  // Degnous -> Degnous Root
+  // Fotia -> Fotia Seedpod
+  // Pingala -> Pingala Seeds
+  // Revenant -> Revenant Pod
+  // Sunset Berry -> Sunset Berries
+  const aliasKey=plantAliasKeyFromText(rawText);
+  if(aliasKey) return aliasKey;
+
+  const plantKeys=CANON.plants.map(n=>({name:n,key:materialKey(n)}));
+
+  // 1) Exact / név eleji találat a plant nevek alapján.
+  // Példa: "Golden Medmon harvestable_base_GoldenMedmon Harvestables".
+  for(const x of plantKeys.slice().sort((a,b)=>b.name.length-a.name.length)){
+    const escaped=x.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+');
+    const re=new RegExp('\\b'+escaped+'\\b','i');
+    if(re.test(rawText)) return x.key;
+  }
+
+  // 2) Wiki kulcs fallback, például harvestable_base_GoldenMedmon.
+  const keyText=materialKey(rawText);
+  if(!keyText) return '';
+  const matches=plantKeys.filter(x=>keyText.includes(x.key));
+  if(!matches.length) return '';
+  matches.sort((a,b)=>b.key.length-a.key.length);
+  return matches[0].key;
+}
+function harvestDepMatchesMaterial(dep,m){
+  if(!m || m.catKey!=='plants') return false;
+  return harvestDepositMaterialKey(dep)===m.matKey;
+}
+function depMatchesMaterial(dep,m){
+  if(m.catKey==='ship') return hasShipPrimaryDualBand(dep,m);
+  if(m.catKey==='plants') return harvestDepMatchesMaterial(dep,m);
+  const mats=Array.isArray(dep.materials)?dep.materials:[];
+  return mats.some(x=>materialKey(x.name||x.key||'')===m.matKey);
+}
+function relevantDeps(loc,m){const resources=Array.isArray(loc.resources)?loc.resources:[]; return resources.filter(r=>(groupMatchName(r.group_name||r.name||r.key,m.cat) && depMatchesMaterial(r,m)));}
+function occurrencePct(loc,dep){
+  const vals=[dep&&dep.relative_probability_max_percent, dep&&dep.relative_probability_percent, dep&&dep.relative_probability_min_percent, loc&&loc.relative_probability_percent, loc&&loc.group_probability_percent];
+  for(const v of vals){const n=Number(v); if(Number.isFinite(n)) return n;}
+  return 0;
+}
+function chooseHqSlice(rows){
+  const list=(rows||[]).map(r=>({row:r,min:Number(r.min_percentage),max:Number(r.max_percentage),qMin:Number(r.quality_min),qMax:Number(r.quality_max)})).filter(x=>Number.isFinite(x.max));
+  if(!list.length) return null;
+  const good501=list.filter(isShipGood501Row);
+  let chosen;
+  if(good501.length){
+    // A feladat: minden ship nyersanyagnál a 501–1000 quality sáv esélyét nézzük.
+    // Ha több ilyen lenne, a legnagyobb jó-minőség esélyű sáv nyer.
+    chosen=good501.slice().sort((a,b)=>b.max-a.max || b.min-a.min || b.qMax-a.qMax)[0];
+  } else if(list.length>1){
+    chosen=list.slice().sort((a,b)=>{
+      const aq=Number.isFinite(a.qMax)?a.qMax:-Infinity;
+      const bq=Number.isFinite(b.qMax)?b.qMax:-Infinity;
+      if(bq!==aq) return bq-aq;
+      return b.max-a.max;
+    })[0];
+  } else { chosen=list[0]; }
+  const rawMax=Math.max(...list.map(x=>x.max));
+  return {row:chosen.row,min:chosen.min,max:chosen.max,qMin:chosen.qMin,qMax:chosen.qMax,rawMax,duplicateCount:list.length,mode:good501.length?'hq-501-1000-best-chance':'fallback-highest-quality'};
+}
+function depScore(loc,dep,m){
+  const rows=selectedMaterialRows(dep,m);
+  const occ=occurrencePct(loc,dep);
+
+  if(m && m.catKey==='plants'){
+    if(!rows.length || !harvestDepMatchesMaterial(dep,m)) return null;
+    const share=occ;
+    const slice={
+      row:rows[0],
+      min:share,
+      max:share,
+      qMin:null,
+      qMax:null,
+      rawMax:share,
+      duplicateCount:1,
+      mode:'harvest-occurrence-share'
+    };
+    return {score:share, occurrence:share, slice, rows};
+  }
+
+  const slice=chooseHqSlice(rows); if(!slice) return null;
+  const score=slice.max*(occ/100);
+  return {score, occurrence:occ, slice, rows};
+}
+function bestDepForLocation(loc,m){
+  let best=null;
+  for(const dep of loc.__deps||[]){const ds=depScore(loc,dep,m); if(!ds) continue; if(!best || ds.score>best.score || (ds.score===best.score && ds.slice.max>best.slice.max)) best={dep,...ds};}
+  return best;
+}
+
+function locSpawnValue(loc){
+  const n=Number(loc && loc.group_probability_percent);
+  return Number.isFinite(n) ? n : 0;
+}
+function locHqMaxValue(loc){
+  const n=Number(loc && loc.__best && loc.__best.slice && loc.__best.slice.max);
+  return Number.isFinite(n) ? n : 0;
+}
+function locOccurrenceValue(loc){
+  const n=Number(loc && loc.__best && loc.__best.occurrence);
+  return Number.isFinite(n) ? n : 0;
+}
+function locScoreValue(loc){
+  const n=Number(loc && loc.__best && loc.__best.score);
+  return Number.isFinite(n) ? n : 0;
+}
+function locEfficiencyValue(loc){
+  // V89:
+  // Normál kártyán: Spawn × régi jó-minőség / anyagsáv score.
+  // Hathor Caves fix kártyán: maga a kézzel javított százalék jelenjen meg,
+  // ne 100 × százalék, mert az félrevezető lenne.
+  if(loc && loc.__manualFixed) return locScoreValue(loc);
+  return locSpawnValue(loc) * locScoreValue(loc);
+}
+function displayEfficiencyValue(loc){
+  // Kijelzésre való érték. A belső rendezési érték marad pontos,
+  // csak a felületen nevezzük értelmesebben.
+  return locEfficiencyValue(loc);
+}
+
+function categoryChanceLabel(m){
+  if(!m) return 'Esély';
+  if(m.catKey==='ship') return 'HQ esély';
+  if(m.catKey==='vehicle') return 'ROC esély';
+  if(m.catKey==='fps') return 'FPS esély';
+  if(m.catKey==='plants') return 'Harvest esély';
+  return 'Esély';
+}
+function categoryMaxLabel(m){
+  if(!m) return 'Sáv max';
+  if(m.catKey==='ship') return 'HQ max';
+  if(m.catKey==='vehicle') return 'Anyag max';
+  if(m.catKey==='fps') return 'Anyag max';
+  if(m.catKey==='plants') return 'Share';
+  return 'Sáv max';
+}
+function categorySliceLabel(m){
+  return m && m.catKey==='ship' ? '501–1000' : 'Kiválasztott sáv';
+}
+function selectedSliceNote(m,best){
+  if(!best || !best.slice) return 'egy találati szelet';
+  if(m && m.catKey==='plants') return 'Harvestables deposit névből számolva / occurrence share';
+  const label=m && m.catKey==='ship' ? '501–1000 jó sáv kiválasztva' : 'kiválasztott anyagsáv';
+  return best.slice.duplicateCount>1 ? label+' / teljes deposit max '+num(best.slice.rawMax,1)+'%' : 'egy találati szelet';
+}
+function categoryHeadlineModeNote(m){
+  if(!m) return '';
+  if(m.catKey==='ship') return 'Ship miningnál csak a deposit név szerinti főanyag számít. Másodlagos material sor nem ad találatot.';
+  if(m.catKey==='vehicle') return 'Vehicle miningnál az adott ROC anyag material sora számít. A ship-only primary deposit szűrés itt nem fut.';
+  if(m.catKey==='fps') return 'FPS miningnál az adott FPS anyag material sora számít. A ship-only primary deposit szűrés itt nem fut.';
+  if(m.catKey==='plants') return 'Harvestable módban az adott gyűjthető anyag material sora számít. A ship-only primary deposit szűrés itt nem fut.';
+  return '';
+}
+function categorySortNote(m){
+  if(!m) return 'Rendezés: gyakorlati esély index.';
+  if(m.catKey==='ship') return 'Rendezés: HQ esély index, vagyis Spawn szorozva jó-minőség score.';
+  if(m.catKey==='vehicle') return 'Rendezés: ROC esély index, vagyis Spawn szorozva kiválasztott anyagsáv score.';
+  if(m.catKey==='fps') return 'Rendezés: FPS esély index, vagyis Spawn szorozva kiválasztott anyagsáv score.';
+  if(m.catKey==='plants') return 'Rendezés: Harvest esély index, vagyis Spawn szorozva kiválasztott anyagsáv score.';
+  return 'Rendezés: gyakorlati esély index.';
+}
+function compareLocationEfficiency(a,b){
+  // V82 rendezés:
+  // Első a HQ esély index.
+  // Ez Spawn × régi jó-minőség score.
+  // Utána Spawn, HQ max, occurrence, score, majd név.
+  // Az EPS azért kell, hogy mikroszkopikus lebegőpontos eltérés miatt ne ugráljon a sorrend.
+  const EPS=1e-9;
+
+  const d1=locEfficiencyValue(b)-locEfficiencyValue(a);
+  if(Math.abs(d1)>EPS) return d1;
+
+  const d2=locSpawnValue(b)-locSpawnValue(a);
+  if(Math.abs(d2)>EPS) return d2;
+
+  const d3=locHqMaxValue(b)-locHqMaxValue(a);
+  if(Math.abs(d3)>EPS) return d3;
+
+  const d4=locOccurrenceValue(b)-locOccurrenceValue(a);
+  if(Math.abs(d4)>EPS) return d4;
+
+  const d5=locScoreValue(b)-locScoreValue(a);
+  if(Math.abs(d5)>EPS) return d5;
+
+  return String(a.display_name||a.name).localeCompare(String(b.display_name||b.name),'hu');
+}
+
+function locDisplayName(loc){ return loc.display_name||loc.name||'Ismeretlen hely'; }
+function formatPyroBodyName(raw){
+  const s=String(raw||'').trim();
+  const m=s.match(/^Pyro\s+([IVXLCDM]+)([a-z])?\s*:\s*(.+)$/i);
+  if(!m) return s;
+  const roman=m[1].toUpperCase();
+  const letter=m[2] ? '-'+m[2].toLowerCase() : '';
+  return 'Pyro '+roman+letter+' ('+m[3].trim()+')';
+}
+function formatStantonBodyName(raw){
+  const s=String(raw||'').trim();
+  const m=s.match(/^Stanton\s+[IVXLCDM]+[a-z]?\s*:\s*(.+)$/i);
+  if(!m) return s;
+  return m[1].trim();
+}
+function displayLocationName(loc,m){
+  const raw=locDisplayName(loc);
+  if(m && (m.catKey==='fps' || m.catKey==='plants') && !loc.__manualFixed){
+    if(/^Pyro\s+/i.test(raw)) return formatPyroBodyName(raw);
+    if(/^Stanton\s+/i.test(raw)) return formatStantonBodyName(raw);
+  }
+  return raw;
+}
+function isFpsWikiOutpostLocation(loc,m){
+  if(!m || m.catKey!=='fps' || loc.__manualFixed) return false;
+  const type=String(loc && loc.type || '').trim();
+  return /^outpost$/i.test(type);
+}
+function isAkiroClusterLocation(loc){
+  const text=[
+    locDisplayName(loc),
+    loc.name,
+    loc.display_name,
+    loc.parent_name,
+    ...(Array.isArray(loc.parent_names)?loc.parent_names:[]),
+    ...(Array.isArray(loc.__groupMembers)?loc.__groupMembers:[])
+  ].filter(Boolean).join(' | ');
+  return /\bAkiro\s+Cluster\b/i.test(text);
+}
+
+function isGenericStarLocation(loc){
+  return /^star$/i.test(String(loc && loc.type || '').trim());
+}
+function isPyroInternalAsteroidPoint(loc){
+  const name=String(locDisplayName(loc)||loc.name||loc.display_name||'').trim();
+  const sys=String(loc && loc.system || '').trim();
+  return /^pyro\s+system$/i.test(sys) && /^PYR\d+\s+L\d+$/i.test(name);
+}
+function isKnownScmdbRejectedOreLocation(loc,m){
+  // V76:
+  // Nem anyag/hely hardcode.
+  // A generic Star sorokat nem mutatjuk ship mining locationként,
+  // mert SCMDB-ben ezek nem külön bányászati célpont-kártyák.
+  if(m && m.catKey==='ship' && isGenericStarLocation(loc)) return true;
+  if(m && m.catKey==='ship' && isPyroInternalAsteroidPoint(loc)) return true;
+  return false;
+}
+function splitParentBits(loc){
+  const raw=[loc.parent_name, ...(Array.isArray(loc.parent_names)?loc.parent_names:[])].filter(Boolean);
+  return raw.flatMap(x=>String(x).split(',')).map(s=>s.trim()).filter(Boolean);
+}
+const STANTON_LAGRANGE_GROUPS = [
+  {name:'Lagrange A', bases:['HUR-L1','HUR-L4']},
+  {name:'Lagrange B', bases:['ARC-L5','CRU-L4','MIC-L3']},
+  {name:'Lagrange C', bases:['HUR-L5','MIC-L1','MIC-L2','MIC-L5','CRU-L3']},
+  {name:'Lagrange D', bases:['ARC-L3','CRU-L5','MIC-L4']},
+  {name:'Lagrange E', bases:['CRU-L1','CRU-L2','HUR-L3']},
+  {name:'Lagrange F', bases:['HUR-L2','ARC-L1','ARC-L2','ARC-L4']}
+];
+function mergeStantonLagrangeBases(locs){
+  const out=[];
+  const grouped=new Map();
+  const norm=s=>String(s||'').toUpperCase().replace(/\s+/g,'').trim();
+  const isStanton=l=>/^stanton( system)?$/i.test(String(l.system||'').replace(/\s+/g,' ').trim());
+  const groupForLoc=l=>{
+    if(!isStanton(l)) return null;
+    const text=[
+      locDisplayName(l),
+      l.name,
+      l.display_name,
+      l.parent_name,
+      ...(Array.isArray(l.parent_names)?l.parent_names:[]),
+      ...(Array.isArray(l.__groupMembers)?l.__groupMembers:[])
+    ].filter(Boolean).join(' | ');
+    for(const group of STANTON_LAGRANGE_GROUPS){
+      if(new RegExp('\\b'+group.name.replace(/\s+/g,'\\s+')+'\\b','i').test(text)) return group;
+      for(const base of group.bases){
+        const b=base.replace('-','[-\\s]?');
+        if(new RegExp('\\b'+b+'\\b','i').test(text)) return group;
+      }
+    }
+    return null;
+  };
+  for(const loc of locs){
+    const group=groupForLoc(loc);
+    if(!group){ out.push(loc); continue; }
+    if(!grouped.has(group.name)) grouped.set(group.name,{group,members:[]});
+    grouped.get(group.name).members.push(loc);
+  }
+  for(const {group,members} of grouped.values()){
+    const ranked=members.slice().sort((a,b)=>((b.__best&&b.__best.score)||0)-((a.__best&&a.__best.score)||0));
+    const bestMember=ranked[0];
+    const merged={...bestMember};
+    merged.display_name=group.name;
+    merged.name=group.name;
+    merged.type='Lagrange';
+    merged.system='Stanton System';
+    merged.parent_name='';
+    merged.parent_names=group.bases.slice();
+    merged.__groupMembers=group.bases.slice();
+    merged.__bestSourceName=locDisplayName(bestMember);
+    merged.__groupMembersFound=members.map(locDisplayName);
+    out.push(merged);
+  }
+  return out;
+}
+function mergePyroDeepSpaceAsteroids(locs){
+  const out=[];
+  const members=[];
+  const isPyro=l=>/^pyro( system)?$/i.test(String(l.system||'').replace(/\s+/g,' ').trim());
+
+  // Pyro Deep Space Asteroids = minden Pyro-beli Cluster, RAB és RMB location.
+  // Nem parent alapján döntünk, mert a Wiki API több ilyen belső helyet simán Asteroid / Pyro alatt ad vissza.
+  const isDeepSpaceMember=l=>{
+    const name=locDisplayName(l);
+    return /^(Cluster|RAB|RMB)(?:\b|[-_\s])/i.test(name);
+  };
+
+  for(const loc of locs){
+    if(isPyro(loc) && isDeepSpaceMember(loc)) members.push(loc);
+    else out.push(loc);
+  }
+
+  if(!members.length) return out;
+
+  const ranked=members.slice().sort((a,b)=>
+    ((b.__best&&b.__best.score)||0)-((a.__best&&a.__best.score)||0)
+    || String(locDisplayName(a)).localeCompare(String(locDisplayName(b)))
+  );
+
+  const bestMember=ranked[0];
+  const merged={...bestMember};
+  merged.display_name='Pyro Deep Space Asteroids';
+  merged.name='Pyro Deep Space Asteroids';
+  merged.type='Belt';
+  merged.system='Pyro System';
+  merged.parent_name='';
+  merged.parent_names=[];
+  merged.__groupMembers=['All Cluster, RAB and RMB locations'];
+  merged.__groupMembersFound=members.map(locDisplayName);
+  merged.__bestSourceName=locDisplayName(bestMember);
+  out.push(merged);
+  return out;
+}
+
+const AARON_HALO_URL = 'https://cstone.space/resources/knowledge-base/36-refinery-to-aaron-halo-mining-routes';
+
+const AARON_HALO_SHIP_PROFILE = [
+  {name:'Beryl', label:'Beryl (Raw)', share:18.0, signature:'3540', cluster:'100% · 2-4'},
+  {name:'Aslarite', label:'Aslarite (Raw)', share:14.2, signature:'3840', cluster:'100% · 3-5'},
+  {name:'Titanium', label:'Titanium (Ore)', share:14.2, signature:'3855', cluster:'100% · 3-5'},
+  {name:'Ice', label:'Raw Ice', share:10.4, signature:'4300', cluster:'100% · 4-6'},
+  {name:'Silicon', label:'Raw Silicon', share:10.3, signature:'4255', cluster:'100% · 4-6'},
+  {name:'Aluminium', label:'Aluminum (Ore)', share:10.3, signature:'4285', cluster:'100% · 4-6'},
+  {name:'Iron', label:'Iron (Ore)', share:10.3, signature:'4270', cluster:'100% · 4-6'},
+  {name:'Copper', label:'Copper (Ore)', share:10.3, signature:'4240', cluster:'100% · 4-6'},
+  {name:'Quantanium', label:'Quantainium (Raw)', share:2.0, signature:'3170', cluster:'25% · 2'}
+];
+function aaronHaloProfileForMaterial(m){
+  if(!m || m.catKey!=='ship') return null;
+  const key=materialKey(m.name||'');
+  return AARON_HALO_SHIP_PROFILE.find(x=>materialKey(x.name)===key || materialKey(x.label)===key) || null;
+}
+function findMaterialTemplateBest(detail,m){
+  const allLoc=Array.isArray(detail&&detail.locations)?detail.locations:[];
+  let best=null;
+  for(const loc of allLoc){
+    const resources=Array.isArray(loc.resources)?loc.resources:[];
+    for(const dep of resources){
+      if(!groupMatchName(dep.group_name||dep.name||dep.key,m.cat)) continue;
+      if(shipPrimaryMaterialKey(dep)!==m.matKey) continue;
+      const rows=selectedMaterialRows(dep,m);
+      const slice=chooseHqSlice(rows);
+      if(!slice) continue;
+      if(!best || slice.max>best.max) best=slice;
+    }
+  }
+  return best;
+}
+function createAaronHaloSpecialLocation(m,detail){
+  const profile=aaronHaloProfileForMaterial(m);
+  if(!profile) return null;
+  const templateSlice=findMaterialTemplateBest(detail,m) || {min:profile.share,max:profile.share,rawMax:profile.share,duplicateCount:1,mode:'scmdb-special-profile'};
+  const score=templateSlice && Number.isFinite(Number(templateSlice.max)) ? Number(templateSlice.max)*(profile.share/100) : profile.share;
+  return {
+    name:'Aaron Halo',
+    display_name:'Aaron Halo',
+    system:'Stanton System',
+    type:'Special Belt',
+    parent_name:'',
+    parent_names:['SCMDB special profile'],
+    group_probability_percent:profile.share,
+    relative_probability_percent:profile.share,
+    quality_min:null,
+    quality_max:null,
+    __deps:[],
+    __best:{
+      score:score,
+      occurrence:profile.share,
+      slice:{...templateSlice, mode:'scmdb-special-profile'},
+      rows:[]
+    },
+    __specialLink:AARON_HALO_URL,
+    __specialProfile:true,
+    __specialSource:'SCMDB Aaron Halo profile',
+    __specialProfileData:profile
+  };
+}
+function appendSpecialProfileLocations(locs,m,detail){
+  const out=Array.isArray(locs)?locs.slice():[];
+  const ah=createAaronHaloSpecialLocation(m,detail);
+  if(ah){
+    const exists=out.some(l=>isAaronHaloLocation(l));
+    if(!exists) out.push(ah);
+  }
+  return out;
+}
+function isAaronHaloMiningBaseLocation(loc){
+  const text=[
+    locDisplayName(loc),
+    loc.name,
+    loc.display_name,
+    loc.type,
+    loc.parent_name,
+    ...(Array.isArray(loc.parent_names)?loc.parent_names:[]),
+    ...(Array.isArray(loc.__groupMembers)?loc.__groupMembers:[])
+  ].filter(Boolean).join(' | ');
+  return /\bMining\s+Base\s*#/i.test(text);
+}
+function isAaronHaloLocation(loc){
+  const text=[
+    locDisplayName(loc),
+    loc.name,
+    loc.display_name,
+    loc.type,
+    loc.parent_name,
+    ...(Array.isArray(loc.parent_names)?loc.parent_names:[]),
+    ...(Array.isArray(loc.__groupMembers)?loc.__groupMembers:[])
+  ].filter(Boolean).join(' | ');
+  return /\bAaron\s+Halo\b/i.test(text) || isAaronHaloMiningBaseLocation(loc);
+}
+function mergeAaronHaloLocations(locs){
+  const out=[];
+  const members=[];
+  for(const loc of locs){
+    if(isAaronHaloLocation(loc)) members.push(loc);
+    else out.push(loc);
+  }
+  if(!members.length) return out;
+
+  const ranked=members.slice().sort((a,b)=>
+    ((b.__best&&b.__best.score)||0)-((a.__best&&a.__best.score)||0)
+    || String(locDisplayName(a)).localeCompare(String(locDisplayName(b)))
+  );
+
+  const bestMember=ranked[0];
+  const merged={...bestMember};
+  merged.display_name='Aaron Halo';
+  merged.name='Aaron Halo';
+  merged.type='Belt';
+  merged.system=bestMember.system || 'Stanton System';
+  merged.parent_name='All Mining Base locations';
+  merged.parent_names=['All Mining Base locations'];
+  merged.__groupMembers=['All Mining Base locations'];
+  merged.__groupMembersFound=members.map(locDisplayName);
+  merged.__bestSourceName='Aaron Halo';
+  merged.__specialLink=AARON_HALO_URL;
+  merged.__aaronHaloMerged=true;
+  out.push(merged);
+  return out;
+}
+function mergeSpecialShipLocations(locs){
+  return mergeAaronHaloLocations(mergePyroDeepSpaceAsteroids(mergeStantonLagrangeBases(locs)));
+}
+
+const FPS_MANUAL_FIXED_LOCATIONS = [
+  // Vehicle / ROC. Ezt korábban SCMDB alapján javítottuk.
+  {catKey:'vehicle', matKey:'carinite', name:'Carinite', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:11.6, badge:'Hathor fix', note:'Hathor Caves fix: Carinite 11.6%.'},
+
+  // FPS Mining, Hathor Caves. Ezek a kapott SCMDB képek alapján ténylegesen Hathor Caves alá tartoznak.
+  {catKey:'fps', matKey:'aphorite', name:'Aphorite', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:30.2, badge:'Hathor fix', note:'Hathor Caves fix: Aphorite 30.2%.'},
+  {catKey:'fps', matKey:'carinite', name:'Carinite', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:11.6, badge:'Hathor fix', note:'Hathor Caves fix: Carinite 11.6%.'},
+  {catKey:'fps', matKey:'carinitepure', name:'Carinite Pure', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:0.5, badge:'Hathor fix', note:'Hathor Caves fix: Carinite Pure 0.5%.'},
+  {catKey:'fps', matKey:'dolivine', name:'Dolivine', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:18.3, badge:'Hathor fix', note:'Hathor Caves fix: Dolivine 18.3%.'},
+  {catKey:'fps', matKey:'hadanite', name:'Hadanite', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:3.2, badge:'Hathor fix', note:'Hathor Caves fix: Hadanite 3.2%.'},
+  {catKey:'fps', matKey:'jaclium', name:'Jaclium', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:19.5, badge:'Hathor fix', note:'Hathor Caves fix: Jaclium 19.5%.'},
+  {catKey:'fps', matKey:'janalite', name:'Janalite', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:1.1, badge:'Hathor fix', note:'Hathor Caves fix: Janalite 1.1%.'},
+  {catKey:'fps', matKey:'salydium', name:'Salydium', location:'Hathor Caves', system:'Stanton System', type:'Cave', percent:15.8, badge:'Hathor fix', note:'Hathor Caves fix: Salydium 15.8%.'},
+
+  // FPS Mining, Breaker Stations Interior. Ez NEM Hathor. SCMDB-ben is becslésként van jelölve.
+  {catKey:'fps', matKey:'aphorite', name:'Aphorite', location:'Breaker Stations Interior', system:'Nyx System', type:'Event', percent:75.0, badge:'SCMDB estimate', note:'Breaker Stations Interior: SCMDB personal guesstimate, not game data.'},
+  {catKey:'fps', matKey:'sadaryx', name:'Sadaryx', location:'Breaker Stations Interior', system:'Nyx System', type:'Event', percent:25.0, badge:'SCMDB estimate', note:'Breaker Stations Interior: SCMDB personal guesstimate, not game data.'},
+
+  // Plants / Harvest. Ezek fallback-only fixek.
+  // Csak akkor jelennek meg, ha a Wiki API nem ad számolható rendes találatot.
+  {catKey:'plants', matKey:'amiantpod', name:'Amiant Pod', location:'Pyro IV', system:'Pyro System', type:'Planet', percent:50.0, badge:'SCMDB fallback', fallbackOnly:true, note:'Amiant Pod SCMDB fallback: Pyro IV 50.0%. Ha a Wiki API később rendesen adja, ez nem írja felül.'},
+  {catKey:'plants', matKey:'flareweed', name:'Flareweed', location:'Pyro IV', system:'Pyro System', type:'Planet', percent:50.0, badge:'SCMDB fallback', fallbackOnly:true, note:'Flareweed SCMDB fallback: Pyro IV 50.0%. Ha a Wiki API később rendesen adja, ez nem írja felül.'},
+  {catKey:'plants', matKey:'woutan', name:'Woutan', location:'Pyro I', system:'Pyro System', type:'Planet', percent:23.1, badge:'SCMDB fallback', fallbackOnly:true, note:'Woutan SCMDB fallback: Pyro I 23.1%. Ha a Wiki API később rendesen adja, ez nem írja felül.'}
+];
+function fixedLocationKey(entry){ return String(entry&&entry.location||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+function isManualFixedLocationName(loc,entry){
+  const target=fixedLocationKey(entry);
+  const text=[
+    locDisplayName(loc),
+    loc && loc.name,
+    loc && loc.display_name,
+    loc && loc.parent_name,
+    ...(Array.isArray(loc && loc.parent_names)?loc.parent_names:[])
+  ].filter(Boolean).join(' | ').toLowerCase();
+  if(target==='hathor caves') return /\bhathor\s+caves?\b/i.test(text);
+  if(target==='breaker stations interior') return /\bbreaker\s+stations?\s+interior\b/i.test(text);
+  return text.includes(target);
+}
+function manualFixedForMaterial(m){
+  if(!m) return [];
+  let key=materialKey(m.name||m.matKey||'');
+  if(m.catKey==='plants'){
+    const alias=plantAliasKeyFromText(m.name||m.matKey||'');
+    if(alias) key=alias;
+  }
+  return FPS_MANUAL_FIXED_LOCATIONS.filter(x=>x.catKey===m.catKey && (x.matKey===m.matKey || x.matKey===key || materialKey(x.name)===key));
+}
+function hathorFixedForMaterial(m){
+  // Régi név kompatibilitás miatt marad. Most már csak a Hathor Caves entryt adja vissza.
+  return manualFixedForMaterial(m).find(x=>fixedLocationKey(x)==='hathor caves') || null;
+}
+function createManualFixedLocation(entry){
+  if(!entry) return null;
+  const p=Number(entry.percent);
+  const isHathor=fixedLocationKey(entry)==='hathor caves';
+  const isBreaker=fixedLocationKey(entry)==='breaker stations interior';
+  return {
+    name:entry.location,
+    display_name:entry.location,
+    system:entry.system||'Unknown System',
+    type:entry.type||'Special',
+    parent_name:isHathor?'Hathor':'',
+    parent_names:isHathor?['Hathor']:[],
+    group_probability_percent:100,
+    relative_probability_percent:p,
+    quality_min:null,
+    quality_max:null,
+    __deps:[],
+    __best:{
+      score:p,
+      occurrence:p,
+      slice:{min:p,max:p,qMin:null,qMax:null,rawMax:p,duplicateCount:1,mode:'manual-fixed-special'},
+      rows:[]
+    },
+    __manualFixed:true,
+    __hathorFixed:isHathor,
+    __breakerFixed:isBreaker,
+    __fixedBadge:entry.badge || (isHathor?'Hathor fix':'SCMDB special'),
+    __fixedSource:'SCMDB / manual special location correction',
+    __fixedNote:entry.note || (entry.location+' fix: '+entry.name+' '+p+'%.')
+  };
+}
+function applyManualFixedLocations(locs,m){
+  const entries=manualFixedForMaterial(m);
+  if(!entries.length) return Array.isArray(locs)?locs:[];
+  let out=Array.isArray(locs)?locs.slice():[];
+  const hasRealApiLocation=out.some(l=>!l.__manualFixed);
+  for(const entry of entries){
+    // V95:
+    // fallbackOnly fixek csak akkor jönnek be, ha nincs rendes API-ból számolható találat.
+    // Ezzel Flareweed és Woutan később automatikusan át tud állni Wiki API alapú adatra.
+    if(entry.fallbackOnly && hasRealApiLocation) continue;
+    out=out.filter(l=>!isManualFixedLocationName(l,entry));
+    const fixed=createManualFixedLocation(entry);
+    if(fixed) out.push(fixed);
+  }
+  return out;
+}
+
+function prepareLocations(detail,m){
+  const allLoc=Array.isArray(detail.locations)?detail.locations:[];
+  let locs=allLoc
+    .map(l=>{const x={...l}; x.__deps=relevantDeps(x,m); x.__best=bestDepForLocation(x,m); return x;})
+    .filter(x=>x.__deps.length && x.__best)
+    .filter(x=>!isAkiroClusterLocation(x))
+    .filter(x=>!isKnownScmdbRejectedOreLocation(x,m));
+  if(m.catKey==='ship') locs=mergeSpecialShipLocations(locs)
+    .filter(x=>!isAkiroClusterLocation(x))
+    .filter(x=>!isKnownScmdbRejectedOreLocation(x,m));
+
+  // V92:
+  // FPS Miningnál a Wiki API Outpost sorai nem SCMDB-szerű bányászhely kártyák.
+  // Ezek Janalite-nál például HDSF / Onyx / Jumptown jellegű sorokat hoztak előre,
+  // miközben az SCMDB képeken a tényleges kártyaszint bolygó / hold / Hathor / Breaker.
+  if(m.catKey==='fps') locs=locs.filter(x=>!isFpsWikiOutpostLocation(x,m));
+
+  locs=applyManualFixedLocations(locs,m);
+  return locs;
+}
+
+function applyGlobalBestOreFilter(locs,m){
+  // V73:
+  // A korábbi globális maximum szűrést kivettük.
+  // Most minden rendszerből külön a top 3 találat jelenik meg.
+  return Array.isArray(locs) ? locs : [];
+}
+
+function summarizeMaterialRowForDiag(row){
+  return {
+    name: row && (row.name || row.key || ''),
+    materialKey: materialKey(row && (row.name || row.key || '')),
+    min_percentage: row && row.min_percentage,
+    max_percentage: row && row.max_percentage,
+    quality_min: row && row.quality_min,
+    quality_max: row && row.quality_max,
+    quality_mean: row && row.quality_mean,
+    relative_probability_percent: row && row.relative_probability_percent,
+    received: Array.isArray(row && row.quality_quantized_values) ? row.quality_quantized_values.join(', ') : ''
+  };
+}
+function analyzeDepositForDiag(loc,dep,m){
+  const rows=Array.isArray(dep.materials)?dep.materials:[];
+  const selectedRows=selectedMaterialRows(dep,m);
+  const primaryKey=(m&&m.catKey==='plants') ? harvestDepositMaterialKey(dep) : shipPrimaryMaterialKey(dep);
+  const depText=depPrimaryText(dep);
+  const groupOk=groupMatchName(dep.group_name||dep.name||dep.key,m.cat);
+  const depMatch=depMatchesMaterial(dep,m);
+  const rel=depScore(loc,dep,m);
+  const reasons=[];
+  if(!groupOk) reasons.push('REJECT: group nem illik a kategóriára');
+  if(m.catKey==='plants'){
+    if(primaryKey!==m.matKey) reasons.push('REJECT: Harvestables deposit neve nem ez az anyag. primary='+primaryKey+', keresett='+m.matKey);
+    else reasons.push('ACCEPT: Harvestables deposit név alapján releváns');
+  }
+  if(m.catKey==='ship'){
+    if(primaryKey!==m.matKey) reasons.push('REJECT: nem ez a főanyag. primary='+primaryKey+', keresett='+m.matKey);
+    if(!selectedRows.length) reasons.push('REJECT: nincs material sor ehhez az anyaghoz');
+    else {
+      const rowNames=selectedRows.map(r=>String(r.name||r.key||'')).join(' | ');
+      if(/\(Raw\)|\bRaw\b/i.test(rowNames)) reasons.push('INFO: kiválasztott sor Raw jelölésű: '+rowNames);
+      if(/\(Ore\)|\bOre\b/i.test(rowNames)) reasons.push('INFO: kiválasztott sor Ore jelölésű: '+rowNames);
+    }
+    if(selectedRows.length && !hasPrimaryDualBandRows(selectedRows.map((row,idx)=>({row,idx,...rowNumbers(row)})))) reasons.push('REJECT: nincs 501–1000 quality primary sáv a keresett anyagra');
+  }
+  if(groupOk && depMatch) reasons.push('ACCEPT: releváns deposit');
+  if(groupOk && depMatch && !selectedRows.length) reasons.push('WARN: releváns deposit, de nincs kiválasztott material sor a pontszámításhoz');
+  return {
+    location: locDisplayName(loc),
+    system: loc.system || '',
+    type: loc.type || '',
+    depositLabel: dep.label || dep.name || dep.key || '',
+    depositText: depText,
+    group: dep.group_name || '',
+    primaryKey,
+    searchedKey: m.matKey,
+    groupOk,
+    depMatchesMaterial: depMatch,
+    occurrence: occurrencePct(loc,dep),
+    score: rel ? Number(rel.score.toFixed(6)) : null,
+    selectedRows: selectedRows.map(summarizeMaterialRowForDiag),
+    allRows: rows.map(summarizeMaterialRowForDiag),
+    reasons
+  };
+}
+function buildDiagnosticReport(m,detail,filteredLocs){
+  const lines=[];
+  const allLocs=Array.isArray(detail&&detail.locations)?detail.locations:[];
+  lines.push('=== MINING DEBUG REPORT ==='); lines.push('Programverzió: '+APP_VERSION);
+  lines.push('Idő: '+new Date().toISOString());
+  lines.push('Anyag: '+(m?m.name:'-'));
+  lines.push('Kategória: '+(m?m.catLabel:'-')+' / '+(m?m.catKey:'-'));
+  lines.push('Keresett materialKey: '+(m?m.matKey:'-')); lines.push('Mód logika: '+(m?categoryHeadlineModeNote(m):'-'));
+  lines.push('Detail locations összesen: '+allLocs.length); if(allLocs.length===0) lines.push('Figyelmeztetés: a detail rekord üres locations tömböt adott. V84-ben a loader ilyenkor másik slugot is próbál, ha van.');
+  lines.push('Szűrt találat, top 3 vágás előtt: '+(Array.isArray(filteredLocs)?filteredLocs.length:0));
+  lines.push('');
+  lines.push('--- SZŰRT TALÁLATOK, TOP 3 VÁGÁS ELŐTT ---');
+  if(Array.isArray(filteredLocs) && filteredLocs.length){
+    filteredLocs.forEach((l,i)=>{
+      const b=l.__best||{};
+      lines.push((i+1)+'. '+displayLocationName(l,m)+' | rawName='+locDisplayName(l)+' | system='+(l.system||'-')+' | type='+(l.type||'-')+' | chanceIndex='+num(displayEfficiencyValue(l),4)+' | spawn='+num(locSpawnValue(l),2)+' | HQmax='+(b.slice?num(b.slice.max,2):'-')+' | occurrence='+num(b.occurrence,2)+' | score≤'+num(b.score,4)+' | selectedQuality='+(b.slice?qRange(b.slice.qMin,b.slice.qMax):'-'));
+      if(l.__bestSourceName) lines.push('   top forrás: '+l.__bestSourceName);
+      if(l.__manualFixed) lines.push('   fix: '+(l.__fixedNote||'Hathor Caves manual fix'));
+    });
+  } else {
+    lines.push('Nincs szűrt találat.');
+  }
+  lines.push('');
+  lines.push('--- NYERS LOCATION / DEPOSIT ANALÍZIS ---');
+  let depCount=0, selectedRowCount=0, acceptedCount=0;
+  for(const loc of allLocs){
+    const resources=Array.isArray(loc.resources)?loc.resources:[];
+    let locPrinted=false;
+    for(const dep of resources){
+      const rows=Array.isArray(dep.materials)?dep.materials:[];
+      const hasSelected=rows.some(r=>materialKey(r.name||r.key||'')===(m?m.matKey:''));
+      const groupOk=m?groupMatchName(dep.group_name||dep.name||dep.key,m.cat):false;
+      if(!hasSelected && !groupOk) continue;
+      depCount++;
+      if(hasSelected) selectedRowCount++;
+      const a=analyzeDepositForDiag(loc,dep,m);
+      if(a.depMatchesMaterial) acceptedCount++;
+      if(!locPrinted){
+        lines.push('');
+        lines.push('LOCATION: '+locDisplayName(loc)+' | system='+(loc.system||'-')+' | type='+(loc.type||'-')+' | parent='+(loc.parent_name||'-')+' | groupProb='+(loc.group_probability_percent??'-')+' | relProb='+(loc.relative_probability_percent??'-'));
+        locPrinted=true;
+      }
+      lines.push('  DEPOSIT: '+a.depositLabel+' | group='+(a.group||'-')+' | primaryKey='+(a.primaryKey||'-')+' | searchedKey='+a.searchedKey+' | occurrence='+a.occurrence+' | score='+(a.score??'-'));
+      lines.push('    depText: '+a.depositText);
+      lines.push('    status: '+a.reasons.join(' ; '));
+      if(a.selectedRows.length){
+        lines.push('    selectedRows:');
+        a.selectedRows.forEach(r=>{
+          lines.push('      - '+r.name+' | key='+r.materialKey+' | range='+r.min_percentage+'-'+r.max_percentage+' | Q='+r.quality_min+'-'+r.quality_max+' | mean='+r.quality_mean+' | received='+r.received);
+        });
+      } else {
+        lines.push('    selectedRows: nincs');
+      }
+      lines.push('    allRows:');
+      a.allRows.forEach(r=>{
+        lines.push('      - '+r.name+' | key='+r.materialKey+' | range='+r.min_percentage+'-'+r.max_percentage+' | Q='+r.quality_min+'-'+r.quality_max+' | mean='+r.quality_mean);
+      });
+    }
+  }
+  lines.push('');
+  lines.push('--- ÖSSZESÍTÉS ---');
+  lines.push('Vizsgált deposit sorok: '+depCount);
+  lines.push('Olyan deposit, ahol szerepel a keresett material sor: '+selectedRowCount);
+  lines.push('Elfogadott releváns deposit: '+acceptedCount); lines.push('Fix kártyák a szűrt találatok között: '+((filteredLocs||[]).filter(x=>x.__manualFixed).length));
+  lines.push('');
+  lines.push('Küldd vissza ezt a blokkot, ha valami nem stimmel.');
+  return lines.join('\n');
+}
+function renderDiagnostics(m,detail,locs){
+  const report=buildDiagnosticReport(m,detail,locs);
+  const wrap=document.createElement('div');
+  wrap.className='diagBox';
+  wrap.innerHTML='<div class="diagHead"><b>Diagnosztikai log</b><div class="diagActions"><button id="btnCopyDiag">Log másolása</button></div></div><pre id="diagPre" class="diagPre"></pre>';
+  wrap.querySelector('#diagPre').textContent=report;
+  setTimeout(()=>{
+    const btn=document.getElementById('btnCopyDiag');
+    if(btn) btn.onclick=()=>navigator.clipboard.writeText(document.getElementById('diagPre').textContent);
+  },0);
+  return wrap;
+}
+
+function renderResults(){
+  const res=$('results'); res.innerHTML='';
+  const m=state.materials.find(x=>x.id===state.selectedId);
+  if(!m){$('headline').textContent='Válassz anyagot bal oldalt.'; return;}
+  const detail=state.selectedDetail; if(!detail)return;
+  let locs=prepareLocations(detail,m);
+  const q=$('search').value.trim().toLowerCase();
+  if(q) locs=locs.filter(l=>m.name.toLowerCase().includes(q)||String((l.name||'')+' '+(l.display_name||'')+' '+(l.system||'')+' '+(l.type||'')+' '+(Array.isArray(l.__groupMembers)?l.__groupMembers.join(' '):'')).toLowerCase().includes(q));
+  const beforeDisplayLimitCount=locs.length;
+  locs=applyGlobalBestOreFilter(locs,m);
+  locs=appendSpecialProfileLocations(locs,m,detail);
+  if(q) locs=locs.filter(l=>String((l.name||'')+' '+(l.display_name||'')+' '+(l.system||'')+' '+(l.type||'')+' '+(Array.isArray(l.__groupMembers)?l.__groupMembers.join(' '):'')+' '+(l.__specialSource||'')).toLowerCase().includes(q) || m.name.toLowerCase().includes(q));
+  locs.sort((a,b)=>String(a.system||'').localeCompare(String(b.system||'')) || compareLocationEfficiency(a,b));
+  const maxText=locs.length ? num(Math.max(...locs.map(l=>l.__best.score)),2) : '—';
+  const specialCount=locs.filter(l=>l.__specialProfile || l.__aaronHaloMerged || l.__manualFixed).length;
+  const specialText=specialCount ? ' + '+specialCount+' special/fix kártya' : '';
+  const plusAaron=(m.catKey==='ship') ? ' Plusz releváns Aaron Halo kártya.' : '';
+  $('headline').innerHTML='<b>'+esc(m.name)+'</b> — '+locs.length+' részletes '+esc(m.cat.locationTitle)+' location'+specialText+'. '+categoryHeadlineModeNote(m)+' Minden rendszerből legfeljebb 3 normál kártya jelenik meg. '+categorySortNote(m)+' Utána Spawn, '+categoryMaxLabel(m)+', occurrence és score.'+plusAaron+' Max score/share: ≤'+maxText+'%.';
+  if(!locs.length){res.innerHTML='<div class="empty">Ehhez az anyaghoz nincs detail API-ból számolható százalékos location, vagy a kereső kiszűrte.</div>'; res.appendChild(renderDiagnostics(m,detail,locs)); renderStats(); return;}
+  const bySystem=new Map(); for(const l of locs){const sys=l.system||'Unknown System'; if(!bySystem.has(sys))bySystem.set(sys,[]); bySystem.get(sys).push(l);}
+  for(const [sys,arr] of [...bySystem.entries()].sort((a,b)=>a[0].localeCompare(b[0]))){
+    const isSpecialCard=x=>!!(x.__specialProfile || x.__aaronHaloMerged || x.__manualFixed);
+    const special=arr.filter(isSpecialCard);
+    const normal=arr.filter(x=>!isSpecialCard(x));
+    const ranked=normal.slice().sort(compareLocationEfficiency);
+    const shown=ranked.slice(0,3).concat(special);
+    shown.sort((a,b)=>Number(isSpecialCard(a))-Number(isSpecialCard(b)) || compareLocationEfficiency(a,b));
+    const block=document.createElement('details'); block.className='sysBlock sysDetails';
+    const top=shown[0];
+    block.innerHTML='<summary class="sysHead"><span class="left"><span class="sysArrow">▶</span><span>'+esc(sys)+' System</span></span><span class="muted">'+shown.length+' hely'+(ranked.length>shown.filter(x=>!x.__specialProfile).length?' / '+ranked.length:'')+(special.length?' + special':'')+', top ≤'+num(top.__best.score,2)+'%</span></summary><div class="sysBody"></div>';
+    const body=block.querySelector('.sysBody'); for(const loc of shown) body.appendChild(renderLocationCard(loc,m)); res.appendChild(block);
+  }
+  res.appendChild(renderDiagnostics(m,detail,locs));
+  renderStats();
+}
+function displaySystemName(sys){
+  return String(sys||'-').replace(/\s+System$/i,'').trim() || '-';
+}
+function uniqueList(arr){
+  const out=[]; const seen=new Set();
+  for(const x of arr||[]){
+    const s=String(x||'').trim();
+    if(!s) continue;
+    const k=s.toLowerCase().replace(/\s+/g,' ');
+    if(seen.has(k)) continue;
+    seen.add(k); out.push(s);
+  }
+  return out;
+}
+function locationBaseList(loc){
+  return uniqueList([
+    loc.parent_name,
+    ...(Array.isArray(loc.parent_names)?loc.parent_names:[]),
+    ...(Array.isArray(loc.__groupMembers)?loc.__groupMembers:[])
+  ]);
+}
+function isFixedLagrangeGroupName(name){
+  return /^Lagrange\s+[A-F]$/i.test(String(name||'').trim());
+}
+function isPyroDeepSpaceGroupName(name){
+  return /^Pyro Deep Space Asteroids$/i.test(String(name||'').trim());
+}
+function renderLocationCard(loc,m){
+  const best=loc.__best; const name=displayLocationName(loc,m); const div=document.createElement('div'); div.className='locCard'+((loc.__specialProfile||loc.__manualFixed)?' specialProfile':'');
+  const titleHtml=loc.__specialLink ? `<a class="specialLink" href="${esc(loc.__specialLink)}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : esc(name);
+  const icon=(m.cat&&m.cat.icon)||'•';
+  const bases=locationBaseList(loc);
+  const isFixedLagrange=isFixedLagrangeGroupName(name);
+  const isPyroDeepSpace=isPyroDeepSpaceGroupName(name);
+  const baseLine=loc.__aaronHaloMerged
+    ? '📍 All Mining Base locations'
+    : (isPyroDeepSpace
+      ? '📍 All Cluster, RAB and RMB locations'
+      : (bases.length ? '📍 '+bases.join(', ') : ''));
+  const typeLine=loc.__aaronHaloMerged
+    ? 'Belt'
+    : (isPyroDeepSpace
+      ? 'Belt'
+      : String(loc.type||'Wiki location').replace(/\s*·\s*Stanton\s*$/i,'').replace(/\s*·\s*Pyro\s*$/i,''));
+  const mergeBits=Array.isArray(loc.__groupMembers)&&loc.__groupMembers.length>1 && !isFixedLagrange && !isPyroDeepSpace && !loc.__aaronHaloMerged
+    ? 'összevonva: '+uniqueList(loc.__groupMembers).slice(0,6).join(', ')+(loc.__groupMembers.length>6?' …':'')
+    : '';
+  const summaryLine = loc.__manualFixed
+    ? `in ${esc(m.name)} (${num(best.occurrence,1)}%)`
+    : (loc.__specialProfile
+      ? `SCMDB Ship Mining share ${num(best.occurrence,1)}%`
+      : (m.catKey==='ship'
+        ? `in ${esc(m.name)} (${num(best.occurrence,1)}%)`
+        : `${esc(categoryMaxLabel(m))} ${num(best.slice.max,1)}% · occurrence ${num(best.occurrence,1)}%`));
+  const metaHtml = [baseLine, typeLine, mergeBits].filter(Boolean).map(x=>`<div>${esc(x)}</div>`).join('');
+  div.innerHTML=`<div class="locTop"><div><div class="locName">${titleHtml}</div><div class="locMeta">${metaHtml}</div></div><div class="badgeLine"><span class="pill">${esc(displaySystemName(loc.system))}</span></div></div><div class="locBody"><div class="scoreBox"><div class="bigScore">≤${num(best.score,2)}% <span style="font-size:18px">${esc(icon)}</span></div><div class="heroMat">${esc(m.name.toUpperCase())}</div><div class="heroLine">${summaryLine}</div><div class="miniInfo">${loc.__manualFixed?`<span class="sourceBadge">${esc(loc.__fixedBadge||'SCMDB fix')}</span><span class="miniTag">Share ${pct(best.occurrence)}</span><span class="miniTag">${esc(categoryChanceLabel(m))} ${num(displayEfficiencyValue(loc),2)}</span>`:(loc.__specialProfile?`<span class="sourceBadge">SCMDB special</span><span class="miniTag">Share ${pct(best.occurrence)}</span><span class="miniTag">Radar ${esc((loc.__specialProfileData&&loc.__specialProfileData.signature)||'-')}</span>`:`<span class="miniTag">Spawn ${pct(loc.group_probability_percent)}</span><span class="miniTag">Occurrence ${pct(best.occurrence)}</span><span class="miniTag">Quality ${esc(chosenQualityRange(best,loc))}</span><span class="miniTag">${esc(categoryMaxLabel(m))} ${num(best.slice.max,1)}%</span><span class="miniTag">${esc(categoryChanceLabel(m))} ${num(displayEfficiencyValue(loc),2)}</span>`)}</div>${renderRadarMini(m)}<div class="smallNote">${loc.__manualFixed?esc(loc.__fixedNote):(loc.__specialProfile?`Aaron Halo route guide · ${esc((loc.__specialProfileData&&loc.__specialProfileData.label)||m.name)} · cluster ${esc((loc.__specialProfileData&&loc.__specialProfileData.cluster)||'-')}`:(loc.__aaronHaloMerged?'':(loc.__bestSourceName&&loc.__bestSourceName!==name?'top forrás: '+loc.__bestSourceName+' · ':''))+selectedSliceNote(m,best))}</div></div></div>`;
+  const deps=[...(loc.__deps||[])].sort((a,b)=>{const as=depScore(loc,a,m)?.score||0; const bs=depScore(loc,b,m)?.score||0; return bs-as;});
+  if(deps.length){
+    const det=document.createElement('details'); det.className='detailToggle';
+    const sum=document.createElement('summary'); sum.textContent='Részletek'; det.appendChild(sum);
+    const body=document.createElement('div'); body.className='body';
+    deps.forEach((dep,i)=>body.appendChild(renderDeposit(dep,m,i===0)));
+    det.appendChild(body); div.querySelector('.locBody').appendChild(det);
+  }
+  return div;
+}
+function renderDeposit(dep,m,isBest=false){
+  const wrap=document.createElement('div'); wrap.className='deposit'+(isBest?' bestDeposit':''); const mats=Array.isArray(dep.materials)?dep.materials:[]; const rows=selectedMaterialRows(dep,m); const slice=chooseHqSlice(rows);
+  const title=document.createElement('div'); title.className='depositTitle'; title.innerHTML=`<span>${esc(dep.label||dep.key||dep.group_name||'Deposit')}</span>${isBest?'<span class="pill">legjobb deposit</span>':''}<span class="pill alt">Signature: ${esc(dep.signature??'—')}</span><span class="pill alt">Occurrence: ${pct(dep.relative_probability_max_percent ?? dep.relative_probability_percent ?? dep.relative_probability_min_percent)}</span><span class="pill alt">Quality: ${esc(qRange(dep.quality_min,dep.quality_max))}</span>${slice?`<span class="pill">${esc(categorySliceLabel(m))}: ${num(slice.max,1)}%</span>`:''}`; wrap.appendChild(title);
+  if(dep.clustering){const c=dep.clustering; const cl=document.createElement('div'); cl.className='badgeLine'; cl.innerHTML=`<span class="pill alt">Cluster: ${esc((c.min_size??'—')+'–'+(c.max_size??'—'))}</span>${c.probability_percent!=null?`<span class="pill alt">Cluster chance: ${pct(c.probability_percent)}</span>`:''}`; wrap.appendChild(cl);}
+  const table=document.createElement('div'); table.className='tableWrap'; table.innerHTML=`<table class="matTable"><thead><tr><th>Material</th><th>Range</th><th>Quality</th><th>Received</th><th class="num">Mean</th><th class="num">Std Dev</th><th class="num">Instability</th><th class="num">Resistance</th><th class="num">Occurrence</th></tr></thead><tbody></tbody></table>`; const tbody=table.querySelector('tbody');
+  for(const mat of mats){const current=materialKey(mat.name||mat.key||'')===m.matKey && (m.catKey!=='ship' || isShipOreMaterialRow(mat)); const qMax=Number(mat.quality_max); const qMid=Number.isFinite(qMax)?Math.max(0,Math.min(100,(qMax/1000)*100)):0; const received=Array.isArray(mat.quality_quantized_values)?mat.quality_quantized_values.join(', '):''; const tr=document.createElement('tr'); if(current) tr.className='currentRow'; const isSlice=current && slice && slice.row===mat; tr.innerHTML=`<td><b>${esc(cleanName(mat.name||mat.key||'',m.catKey))}</b>${current?' <span class="pill">aktuális</span>':''}${isSlice?' <span class="pill">501–1000 sáv</span>':''}</td><td>${esc(rangePct(mat.min_percentage,mat.max_percentage))}</td><td>${esc(qRange(mat.quality_min,mat.quality_max))}<span class="qbar"><span style="width:${qMid}%"></span></span></td><td class="received">${esc(received||'—')}</td><td class="num">${esc(num(mat.quality_mean,0))}</td><td class="num">${esc(num(mat.quality_stddev,0))}</td><td class="num">${esc(num(mat.instability,1))}</td><td class="num">${esc(num(mat.resistance,2))}</td><td class="num">${pct(mat.relative_probability_percent)}</td>`; tbody.appendChild(tr);}
+  if(!mats.length) tbody.innerHTML='<tr><td colspan="9" class="muted">Nincs material részlet.</td></tr>'; wrap.appendChild(table); return wrap;
+}
+function renderStats(){
+  const found=state.materials.filter(m=>m.found).length; const m=state.materials.find(x=>x.id===state.selectedId); const detail=state.selectedDetail; const locs=(detail&&m)?appendSpecialProfileLocations(applyGlobalBestOreFilter(prepareLocations(detail,m),m),m,detail):[]; const systems=new Set(locs.map(l=>l.system).filter(Boolean)); const top=locs.slice().sort(compareLocationEfficiency)[0];
+  const stats=[['Verzió',APP_VERSION],['Anyag',state.materials.length],['API rekordos',found]]; if(m)stats.push(['Aktív',m.catLabel+' / '+m.name]); if(detail)stats.push(['Detail hely',locs.length],['Rendszer',systems.size]); if(top)stats.push(['Top',`${top.display_name||top.name} · ${categoryChanceLabel(m)} ${num(displayEfficiencyValue(top),2)} · Spawn ${num(locSpawnValue(top),1)}% · ${categoryMaxLabel(m)} ${num(locHqMaxValue(top),1)}% · ≤${num(top.__best.score,2)}%`]); const specialN=locs.filter(l=>l.__specialProfile || l.__aaronHaloMerged || l.__manualFixed).length; if(specialN)stats.push(['Special',specialN]); const sig=m?radarSignatureForMaterial(m):null; if(sig)stats.push(['Radar',sig.group+' / '+sig.values.join(' | ')]); $('stats').innerHTML=stats.map(([k,v])=>`<span class="chip">${esc(k)}: <b>${esc(String(v))}</b></span>`).join('');
+}
+function filterCurrent(){renderMaterials(); renderResults();}
+$('btnLoad').addEventListener('click',loadAll); $('btnClear').addEventListener('click',()=>{state.selectedId='';state.selectedDetail=null;renderMaterials();renderResults();}); $('search').addEventListener('input',filterCurrent); $('btnCopyLog').addEventListener('click',()=>navigator.clipboard.writeText($('log').textContent)); $('btnDetailUrl').addEventListener('click',async()=>{try{const url=$('detailUrl').value.trim(); if(!url)return; const token=++state.selectToken; const json=await fetchJsonUrl(url); if(token!==state.selectToken)return; const data=json&&json.data?json.data:json; state.selectedDetail=data; $('headline').innerHTML='<b>Kézi detail</b> betöltve.'; renderResults();}catch(e){setStatus('<span class="bad">Detail URL hiba:</span> '+esc(e.message||String(e)));}});
+
+/* =========================
+   V100 Integration Bridge
+   =========================
+   Cél:
+   - A meglévő UI és számítási logika ne sérüljön.
+   - Másik program vagy másik AI ne a belső kódot piszkálja.
+   - Inkább ezt a stabil bridge API-t használja.
+
+   Használat ugyanazon ablakból:
+   await window.sPgMiningLocatorV1.ready()
+   const result = await window.sPgMiningLocatorV1.getMaterialResults('plants', 'Amiant Pod')
+
+   Használat iframe-ből:
+   iframe.contentWindow.postMessage({
+     scope:'sPgMiningLocatorV1',
+     id:'req-1',
+     action:'getMaterialResults',
+     category:'plants',
+     material:'Amiant Pod'
+   }, '*')
+*/
+function spgIntegrationWaitReady(timeoutMs=30000){
+  const start=Date.now();
+  return new Promise((resolve,reject)=>{
+    const tick=()=>{
+      if(Array.isArray(state.materials) && state.materials.length>0) return resolve(true);
+      if(Date.now()-start>timeoutMs) return reject(new Error('sPgMiningLocatorV1 ready timeout'));
+      setTimeout(tick,100);
+    };
+    tick();
+  });
+}
+function spgIntegrationCategoryKey(cat){
+  const s=String(cat||'').trim().toLowerCase();
+  if(!s) return '';
+  if(['ship','ores','ore'].includes(s)) return 'ship';
+  if(['vehicle','roc','vehicle mining','ground_vehicle','ground vehicle'].includes(s)) return 'vehicle';
+  if(['fps','fps mining'].includes(s)) return 'fps';
+  if(['plants','plant','harvest','harvestable','harvestables'].includes(s)) return 'plants';
+  const found=CATEGORY.find(c=>String(c.label||'').toLowerCase()===s || String(c.key||'').toLowerCase()===s);
+  return found ? found.key : s;
+}
+function spgIntegrationFindMaterial(category, material){
+  const catKey=spgIntegrationCategoryKey(category);
+  const matKey=materialKey(material||'');
+  return state.materials.find(m=>
+    (!catKey || m.catKey===catKey) &&
+    (m.matKey===matKey || materialKey(m.name)===matKey || String(m.name||'').toLowerCase()===String(material||'').toLowerCase())
+  ) || null;
+}
+function spgIntegrationPlainMaterial(m){
+  const fixes=manualFixedForMaterial(m);
+  return {
+    id:m.id,
+    category:m.catKey,
+    categoryLabel:m.catLabel,
+    name:m.name,
+    materialKey:m.matKey,
+    wikiFound:!!m.found,
+    wikiRecordCount:m.records ? m.records.length : 0,
+    wikiLocationCount:m.locationsCount || 0,
+    manualFallbackCount:fixes.length,
+    hasManualFallback:fixes.length>0,
+    radar:radarSignatureForMaterial(m) || null
+  };
+}
+function spgIntegrationPlainLocation(loc,m){
+  const best=loc.__best || {};
+  const slice=best.slice || {};
+  return {
+    name:displayLocationName(loc,m),
+    rawName:locDisplayName(loc),
+    system:displaySystemName(loc.system),
+    systemRaw:loc.system || '',
+    type:loc.type || '',
+    parentName:loc.parent_name || '',
+    baseList:locationBaseList(loc),
+    score:locScoreValue(loc),
+    chanceIndex:displayEfficiencyValue(loc),
+    spawn:locSpawnValue(loc),
+    occurrence:locOccurrenceValue(loc),
+    qualityRange:best && best.slice ? chosenQualityRange(best,loc) : '',
+    sliceMin:Number.isFinite(Number(slice.min)) ? Number(slice.min) : null,
+    sliceMax:Number.isFinite(Number(slice.max)) ? Number(slice.max) : null,
+    rawMax:Number.isFinite(Number(slice.rawMax)) ? Number(slice.rawMax) : null,
+    isSpecial:!!(loc.__specialProfile || loc.__aaronHaloMerged || loc.__manualFixed),
+    isManualFixed:!!loc.__manualFixed,
+    isSpecialProfile:!!loc.__specialProfile,
+    isAaronHaloMerged:!!loc.__aaronHaloMerged,
+    badge:loc.__fixedBadge || (loc.__specialProfile ? 'SCMDB special' : ''),
+    source:loc.__fixedSource || loc.__specialSource || 'Wiki API detail',
+    note:loc.__fixedNote || '',
+    specialLink:loc.__specialLink || '',
+    sourceMembers:Array.isArray(loc.__groupMembers) ? loc.__groupMembers.slice() : []
+  };
+}
+function spgIntegrationBuildResult(m, detail, options={}){
+  const limitPerSystem = Number.isFinite(Number(options.limitPerSystem)) ? Number(options.limitPerSystem) : 3;
+  const search = String(options.search||'').trim().toLowerCase();
+
+  let locs=prepareLocations(detail||{locations:[]},m);
+
+  if(search){
+    locs=locs.filter(l=>m.name.toLowerCase().includes(search)||String((l.name||'')+' '+(l.display_name||'')+' '+(l.system||'')+' '+(l.type||'')+' '+(Array.isArray(l.__groupMembers)?l.__groupMembers.join(' '):'')).toLowerCase().includes(search));
+  }
+
+  const beforeDisplayLimitCount=locs.length;
+  locs=applyGlobalBestOreFilter(locs,m);
+  locs=appendSpecialProfileLocations(locs,m,detail||{locations:[]});
+
+  if(search){
+    locs=locs.filter(l=>String((l.name||'')+' '+(l.display_name||'')+' '+(l.system||'')+' '+(l.type||'')+' '+(Array.isArray(l.__groupMembers)?l.__groupMembers.join(' '):'')+' '+(l.__specialSource||'')).toLowerCase().includes(search) || m.name.toLowerCase().includes(search));
+  }
+
+  locs.sort((a,b)=>String(a.system||'').localeCompare(String(b.system||'')) || compareLocationEfficiency(a,b));
+
+  const isSpecialCard=x=>!!(x.__specialProfile || x.__aaronHaloMerged || x.__manualFixed);
+  const bySystem=new Map();
+  for(const l of locs){
+    const sys=l.system||'Unknown System';
+    if(!bySystem.has(sys)) bySystem.set(sys,[]);
+    bySystem.get(sys).push(l);
+  }
+
+  const systems=[];
+  for(const [sys,arr] of [...bySystem.entries()].sort((a,b)=>a[0].localeCompare(b[0]))){
+    const special=arr.filter(isSpecialCard);
+    const normal=arr.filter(x=>!isSpecialCard(x));
+    const ranked=normal.slice().sort(compareLocationEfficiency);
+    const shown=ranked.slice(0,Math.max(0,limitPerSystem)).concat(special);
+    shown.sort((a,b)=>Number(isSpecialCard(a))-Number(isSpecialCard(b)) || compareLocationEfficiency(a,b));
+    systems.push({
+      system:displaySystemName(sys),
+      systemRaw:sys,
+      totalNormal:ranked.length,
+      specialCount:special.length,
+      shownCount:shown.length,
+      topScore:shown[0] ? locScoreValue(shown[0]) : null,
+      locations:shown.map(l=>spgIntegrationPlainLocation(l,m))
+    });
+  }
+
+  const flat=systems.flatMap(s=>s.locations.map(l=>({...l, system:s.system, systemRaw:s.systemRaw})));
+  const maxScore=flat.length ? Math.max(...flat.map(l=>Number(l.score)||0)) : null;
+
+  return {
+    api:'sPgMiningLocatorV1',
+    version:APP_VERSION,
+    generatedAt:new Date().toISOString(),
+    material:spgIntegrationPlainMaterial(m),
+    rules:{
+      displayLimitPerSystem:limitPerSystem,
+      shipPrimaryOnly:m.catKey==='ship',
+      shipQualityBand:m.catKey==='ship' ? '501-1000' : null,
+      sorting:'chanceIndex, spawn, sliceMax, occurrence, score, name',
+      manualFallbackBehavior:'fallbackOnly entries are used only when no usable Wiki API result exists; non-fallback special entries are added as explicit SCMDB/manual cards'
+    },
+    beforeDisplayLimitCount,
+    totalShown:flat.length,
+    systems,
+    locations:flat
+  };
+}
+async function spgIntegrationGetMaterialResults(category, material, options={}){
+  await spgIntegrationWaitReady(options.timeoutMs || 30000);
+  const m=spgIntegrationFindMaterial(category, material);
+  if(!m) throw new Error('Material not found: '+category+' / '+material);
+
+  // A meglévő selectMaterial logikát használjuk, hogy ugyanaz történjen,
+  // mint a UI-ban. Ez szándékos: így nem jön létre két külön számítási út.
+  await selectMaterial(m.id, options.updateUi!==false);
+
+  return spgIntegrationBuildResult(m,state.selectedDetail||{locations:[]},options);
+}
+function spgIntegrationGetCurrentResults(options={}){
+  const m=state.materials.find(x=>x.id===state.selectedId);
+  if(!m) return null;
+  return spgIntegrationBuildResult(m,state.selectedDetail||{locations:[]},options);
+}
+
+window.sPgMiningLocatorV1 = Object.freeze({
+  version:APP_VERSION,
+  ready:spgIntegrationWaitReady,
+  listMaterials:async function(){
+    await spgIntegrationWaitReady();
+    return state.materials.map(spgIntegrationPlainMaterial);
+  },
+  findMaterial:function(category, material){
+    const m=spgIntegrationFindMaterial(category, material);
+    return m ? spgIntegrationPlainMaterial(m) : null;
+  },
+  getMaterialResults:spgIntegrationGetMaterialResults,
+  getCurrentResults:spgIntegrationGetCurrentResults,
+  getStateSummary:function(){
+    return {
+      version:APP_VERSION,
+      materialCount:state.materials.length,
+      selectedId:state.selectedId,
+      selectedMaterial:(state.materials.find(x=>x.id===state.selectedId)||null)
+    };
+  }
+});
+
+window.addEventListener('message',async event=>{
+  const msg=event.data;
+  if(!msg || msg.scope!=='sPgMiningLocatorV1') return;
+  const reply={scope:'sPgMiningLocatorV1', id:msg.id||null, ok:false};
+  try{
+    if(msg.action==='ping'){
+      reply.ok=true;
+      reply.data={version:APP_VERSION, ready:Array.isArray(state.materials)&&state.materials.length>0};
+    }else if(msg.action==='listMaterials'){
+      reply.ok=true;
+      reply.data=await window.sPgMiningLocatorV1.listMaterials();
+    }else if(msg.action==='getMaterialResults'){
+      reply.ok=true;
+      reply.data=await window.sPgMiningLocatorV1.getMaterialResults(msg.category,msg.material,msg.options||{});
+    }else if(msg.action==='getCurrentResults'){
+      reply.ok=true;
+      reply.data=window.sPgMiningLocatorV1.getCurrentResults(msg.options||{});
+    }else{
+      throw new Error('Unknown sPgMiningLocatorV1 action: '+msg.action);
+    }
+  }catch(err){
+    reply.ok=false;
+    reply.error=err && err.message ? err.message : String(err);
+  }
+  if(event.source && typeof event.source.postMessage==='function') event.source.postMessage(reply,'*');
+});
+
+window.addEventListener('error',e=>{log('JS_ERROR','Globális JS hiba',{message:e.message,filename:e.filename,lineno:e.lineno,colno:e.colno}); setStatus('<span class="bad">JavaScript hiba:</span> '+esc(e.message)); setProgress(100,'JavaScript hiba.',true);});
+log('INIT','Wiki Mining Percent Locations V101 elindult',{version:APP_VERSION,url:location.href,userAgent:navigator.userAgent}); renderStats(); setProgress(3,'Automata betöltés indul...'); setTimeout(loadAll,80);
+</script>
+</body>
+</html>
